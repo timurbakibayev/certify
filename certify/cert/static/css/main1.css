@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'latex';
+    src: url('/static/fonts/cmsl12.ttf');
+}
+ul {
+    list-style-type: none;
+    font-size: medium;
+    padding-left: 20px;
+}
+h1 {
+    margin-top: 0px;
+}
+
+.green {
+    color: #333333;
+}
+.blue {
+    color: #555555;
+}
+
+.room {
+    width: 25%;
+    color: #4d8b9e;
+}
+
+.time {
+    width: 30%;
+}
+
+.event {
+    width: 45%;
+}
+
+td {
+    padding: 10px;
+}

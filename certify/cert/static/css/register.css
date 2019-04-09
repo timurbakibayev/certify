@@ -1,0 +1,21 @@
+.registerForm {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 32px;
+    display: flex;
+    flex-flow: column;
+    width: 800px;
+    border: sienna;
+    border-style: solid;
+    border-radius: 10px;
+    padding: 30px;
+    margin: auto;
+}
+.registerElement {
+    display: flex;
+    flex-flow: row;
+    margin: 5px;
+    width: 100%;
+}
+.error {
+    color: red;
+}

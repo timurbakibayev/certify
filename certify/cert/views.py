@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 
 
 latexify = lambda x: x.replace("$","\$")
@@ -16,3 +16,9 @@ def question(request):
 
     context["course_name"] = "Yessenov Data Lab Test"
     return render(request, "question.html", context)
+
+
+def reply(request, number):
+    context = {}
+    print(number)
+    return HttpResponse("OK")

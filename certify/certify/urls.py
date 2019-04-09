@@ -25,4 +25,5 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   path('admin/', admin.site.urls),
                   path('', views.index),
                   path('question', views.question),
+                  path('reply/<int:number>', views.reply),
               ]

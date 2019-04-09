@@ -50,7 +50,6 @@
     </div>
 </div>
 <script language="JavaScript">
-
     $(function () {
         $(document)
             .ajaxStart(function () {
@@ -61,12 +60,17 @@
 
         $("label.btn").on('click', function () {
             var choice = $(this).find('input:radio').val();
+            $('#loadbar').show();
+    	    $('#quiz').fadeOut();
             setTimeout(function () {
                 console.log("choice:", choice);
+                fetch(`/reply/${choice}`).then( ()=> {
+                        window.location = "/";
+                    }
+                )
             }, 2000);
         });
     });
-
 </script>
 {% include "latexify/scripts.html" %}
 </body>

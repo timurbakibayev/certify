@@ -10,6 +10,7 @@ def index(request):
 
 
 def question(request):
+    #print(request.build_absolute_uri())
     context = {
         "question": latexify("Что такое $x^2$ Data Science?"), "answer1": latexify("d$\\frac{1}{2}$"), "answer2": "Раковина", "answer3": "Зеркало",
                 "answer4": "Вода", "correct": 4}

@@ -12,6 +12,27 @@ class Certificate(models.Model):
         return self.name + " " + self.course
 
 
+class Subject(models.Model):
+    code = models.CharField(max_length=10, default="DS")
+    name = models.CharField(max_length=100, default="", blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.code}: {self.name}"
+
+
+class Question(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    question = models.TextField(max_length=10000, default="", blank=False, null=False)
+    answer1 = models.CharField(max_length=1000, default="", blank=False, null=False)
+    answer2 = models.CharField(max_length=1000, default="", blank=False, null=False)
+    answer3 = models.CharField(max_length=1000, default="", blank=False, null=False)
+    answer4 = models.CharField(max_length=1000, default="", blank=False, null=False)
+    correct_1_to_4 = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.subject.code}: {self.question}"
+
+
 class TestSet(models.Model):
     start_datetime = models.DateTimeField(auto_now_add=True)
     running = models.BooleanField(default=False)

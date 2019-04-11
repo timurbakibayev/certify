@@ -40,6 +40,8 @@ class Person(models.Model):
     birth_date = models.DateField(default="2019-01-01")
     user = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING)
     iin = models.CharField(max_length=12, null=False, blank=False)
+    state = models.CharField(max_length=10, default="idle")
+    password = models.CharField(max_length=10, default="")
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}, ИИН: {self.iin}, Тестов: { Assignment.objects.filter(person=self) }"
@@ -95,6 +97,11 @@ class Assignment(models.Model):
     finished_date_time = models.DateField(null=True, blank=True)
     total_time = models.IntegerField(default=0)
     certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.DO_NOTHING)
+
+    def score_percent(self):
+        if self.quiz_structure.quantity() == 0 or not self.finished:
+            return "Не пройден"
+        return int(self.score / self.quiz_structure.quantity() * 100)
 
     def __str__(self):
         score = ""

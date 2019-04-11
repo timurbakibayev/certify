@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+{% load latexify %}
+<head>
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
+    {% include "css_loads.html" %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="modal-dialog" style="width: 80%; zoom: 1.5">
+        <div class="modal-content">
+            <div class="modal-header">
+                Система тестирования Yessenov Data Lab
+            </div>
+            <div class="modal-body">
+                <div class="quiz">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="operation" value="login">
+                        <label class="btn-lg  btn-block" style="display: flex; flex-flow: column">
+                            Имя пользователя <input name="username" id="username" style="border-radius: .3em" autofocus>
+                        </label>
+                        <label class="btn-lg btn-block" style="display: flex; flex-flow: column">
+                            Пароль <input name="password" type="password" id="password" style="border-radius: .3em">
+                        </label>
+                        <label class="btn-lg btn-block">
+                            <button class="btn btn-primary" type="submit">Вход</button>
+                        </label>
+                        <span class="alert warning" style="color: red">
+                            {% if failed_login %}Неверное имя пользователя или пароль{% endif %}
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    const answer = (chosen) => {
+        console.log(chosen);
+        fadeOut(document.getElementById("quiz"), 500);
+        fetch(`/reply/${chosen}`).then(() => {
+            setTimeout(() => {
+                window.location = "/";
+            }, 1000);
+        });
+    };
+
+
+    function fadeIn(elem, ms) {
+        if (!elem)
+            return;
+
+        elem.style.opacity = 0;
+        elem.style.filter = "alpha(opacity=0)";
+        elem.style.display = "inline-block";
+        elem.style.visibility = "visible";
+
+        if (ms) {
+            var opacity = 0;
+            var timer = setInterval(function () {
+                opacity += 50 / ms;
+                if (opacity >= 1) {
+                    clearInterval(timer);
+                    opacity = 1;
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 1;
+            elem.style.filter = "alpha(opacity=1)";
+        }
+    }
+
+    function fadeOut(elem, ms) {
+        if (!elem)
+            return;
+
+        if (ms) {
+            var opacity = 1;
+            var timer = setInterval(function () {
+                opacity -= 50 / ms;
+                if (opacity <= 0) {
+                    clearInterval(timer);
+                    opacity = 0;
+                    elem.style.display = "none";
+                    elem.style.visibility = "hidden";
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 0;
+            elem.style.filter = "alpha(opacity=0)";
+            elem.style.display = "none";
+            elem.style.visibility = "hidden";
+        }
+    }
+
+</script>
+{% include "latexify/scripts.html" %}
+</body>
+</html>

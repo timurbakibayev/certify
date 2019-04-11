@@ -87,6 +87,7 @@ class Assignment(models.Model):
     assigned_code = models.CharField(max_length=100, null=False, blank=False)
     assigned_to = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='assgn_to')
     person = models.ForeignKey(Person, on_delete=models.DO_NOTHING)
+    quiz_structure = models.ForeignKey(QuizStructure, on_delete=models.DO_NOTHING)
     score = models.IntegerField(default=0)
     started = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)

@@ -1,10 +1,9 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import login, logout, authenticate
 from cert import adminka
-
+from cert import quiz_flow
 
 latexify = lambda x: x.replace("$","\$")
-
 
 def log_me_out(request):
     logout(request)
@@ -31,11 +30,9 @@ def index(request):
         return adminka.index(request)
 
     if not user.is_authenticated:
-        return render(request, "auth.html", {"failed_login": failed_login})
+        return render(request, "auth.html", {"failed_login": failed_login, "title": adminka.title(request)})
 
-
-    context = {}
-    return render(request, "index.html", context)
+    return quiz_flow.index(request)
 
 
 def question(request):
@@ -49,14 +46,3 @@ def question(request):
 
     context["course_name"] = "Yessenov Data Lab Test"
     return render(request, "question.html", context)
-
-
-def reply(request, number):
-    user = request.user
-    if not user.is_authenticated:
-        return redirect("/")
-    context = {}
-    print(number)
-    return HttpResponse("OK")
-
-

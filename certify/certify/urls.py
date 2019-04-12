@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from cert import views
+from cert import quiz_flow
 from certify import settings
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
@@ -26,5 +27,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   path('', views.index),
                   path('question', views.question),
                   path('logout', views.log_me_out),
-                  path('reply/<int:number>', views.reply),
+                  path('reply/<int:number>', quiz_flow.reply),
+                  path('start_quiz', quiz_flow.start),
+                  path('time_left', quiz_flow.time_left_http),
               ]

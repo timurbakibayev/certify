@@ -1,2 +1,2 @@
-scp root@dsa.papers.kz:/var/www/rtify/certify/db.sqlite3 .
+scp root@exam.almau.edu.kz:/var/www/certify/certify/db.sqlite3 .
 

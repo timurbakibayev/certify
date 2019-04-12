@@ -49,6 +49,7 @@ class Person(models.Model):
 
 class QuizStructure(models.Model):
     name = models.CharField(max_length=200, default="", blank=True, null=True)
+    minutes = models.IntegerField(default=120)
     subject1 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub1", blank=False, null=False)
     quantity1 = models.IntegerField(default=10)
     subject2 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub2", blank=True, null=True)
@@ -86,21 +87,21 @@ class QuizStructure(models.Model):
 class Assignment(models.Model):
     assigned_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='assgn_by')
     assigned_date_time = models.DateTimeField(auto_now_add=True)
-    assigned_code = models.CharField(max_length=100, null=False, blank=False)
     assigned_to = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='assgn_to')
     person = models.ForeignKey(Person, on_delete=models.DO_NOTHING)
     quiz_structure = models.ForeignKey(QuizStructure, on_delete=models.DO_NOTHING)
     score = models.IntegerField(default=0)
     started = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
-    started_date_time = models.DateField(null=True, blank=True)
-    finished_date_time = models.DateField(null=True, blank=True)
+    started_date_time = models.DateTimeField(null=True, blank=True)
+    finished_date_time = models.DateTimeField(null=True, blank=True)
     total_time = models.IntegerField(default=0)
     certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.DO_NOTHING)
+    current_question = models.ForeignKey(Question, blank=True, null=True, on_delete=models.DO_NOTHING)
 
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:
-            return "Не пройден"
+            return "-"
         return int(self.score / self.quiz_structure.quantity() * 100)
 
     def __str__(self):
@@ -112,10 +113,11 @@ class Assignment(models.Model):
 
 
 class AssignedQuestion(models.Model):
-    person = models.ForeignKey(Person, on_delete=models.DO_NOTHING)
+    assignment = models.ForeignKey(Assignment, on_delete=models.DO_NOTHING, default="0")
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     answer = models.IntegerField(default=0)
+    answered = models.BooleanField(default=False)
     correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.person.last_name} {self.person.first_name} {self.question}"
+        return f"{self.assignment.person.last_name} {self.assignment.person.first_name} {self.question}"

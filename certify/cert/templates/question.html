@@ -7,10 +7,13 @@
 </head>
 <body>
 <div class="container-fluid">
-    <div class="modal-dialog" style="width: 80%; zoom: 1.5">
+    <div class="modal-dialog" style="width: 100%; zoom: 1; max-width: 1024px">
         <div class="modal-content">
+            <div class="modal-header" style="flex-flow: row-reverse;">
+                <span style="text-align: right">Вопрос {{ question_number }} из {{ questions_total }}, время: <span id="time_left"></span></span>
+            </div>
             <div class="modal-header">
-                <h3>{% latexify question parse_math=True %}</h3>
+                <h3>{% latexify question_text parse_math=True %}</h3>
             </div>
             <div class="modal-body">
                 <div class="col-xs-3 col-xs-offset-5">
@@ -35,11 +38,16 @@
                             class="btn-label"><i class="glyphicon glyphicon-chevron-right"
                     ></i></span>{% latexify answer1 parse_math=True %}</label>
                     <label class="element-animation2 btn btn-lg btn-primary btn-block" onclick="answer(2)"><span
-                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>{{ answer2 }}</label>
+                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i>
+                    </span>{% latexify answer2 parse_math=True %}</label>
                     <label class="element-animation3 btn btn-lg btn-primary btn-block" onclick="answer(3)"><span
-                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>{{ answer3 }}</label>
+                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                        {% latexify answer3 parse_math=True %}
+                    </label>
                     <label class="element-animation4 btn btn-lg btn-primary btn-block" onclick="answer(4)"><span
-                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>{{ answer4 }}</label>
+                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                        {% latexify answer4 parse_math=True %}
+                    </label>
                 </div>
             </div>
         </div>
@@ -56,6 +64,16 @@
         });
     };
 
+    const showTime = async () => {
+        result = await fetch("/time_left");
+        document.getElementById("time_left").innerHTML = await result.text();
+    };
+
+    showTime();
+
+    setInterval(async ()=> {
+        showTime();
+    }, 5000);
 
     function fadeIn(elem, ms) {
         if (!elem)

@@ -7,9 +7,21 @@ from cert.models import Person
 import random
 import string
 
+
+def title(request):
+    title = ""
+    print("uri",request.build_absolute_uri())
+    if "almau" in request.build_absolute_uri():
+        title = "AlmaU"
+    if "dsacademy" in request.build_absolute_uri():
+        title = "Data Science Academy"
+    if "localhost" in request.build_absolute_uri():
+        title = "localhost"
+
+    return title
+
 def index(request):
     user = request.user
-
     if request.method == "POST":
         try:
             quiz = QuizStructure.objects.get(pk=int(request.POST.get("quiz")))
@@ -59,7 +71,6 @@ def index(request):
 
     context["assignments"] = assignments
     context["quiz_structures"] = quizes
-
-
+    context["title"] = title(request)
 
     return render(request, "adminka.html", context=context)

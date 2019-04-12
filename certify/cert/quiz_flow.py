@@ -21,15 +21,8 @@ def index(request):
         ass = Assignment.objects.filter(person=person).filter(finished=False)[0]
     except:
         ass = Assignment.objects.filter(person=person).filter(finished=True)[len(Assignment.objects.filter(person=person).filter(finished=True))-1]
-        ass.score = len(AssignedQuestion.objects.filter(assignment=ass).filter(correct=True))
-        ass.save()
         questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
-        context = {"person": person, "assignment": ass, "question": ass.current_question,
-                   "question_text": latexify(ass.current_question.question),
-                   "answer1": latexify(ass.current_question.answer1),
-                   "answer2": latexify(ass.current_question.answer2),
-                   "answer3": latexify(ass.current_question.answer3),
-                   "answer4": latexify(ass.current_question.answer4),
+        context = {"person": person, "assignment": ass,
                    "questions_total": questions_total,
                    }
         return render(request, "results.html", context)
@@ -55,6 +48,14 @@ def index(request):
         ass.finished_date_time = datetime.datetime.now()
         ass.score = len(AssignedQuestion.objects.filter(assignment=ass).filter(correct=True))
         ass.save()
+
+        questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
+        context = {"person": person, "assignment": ass,
+                   "questions_total": questions_total,
+                   }
+
+        return render(request, "results.html", context)
+
 
     question_number = len(AssignedQuestion.objects.filter(assignment=ass).filter(answered=False))
     questions_total = len(AssignedQuestion.objects.filter(assignment=ass))

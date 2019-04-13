@@ -136,8 +136,9 @@ def start(request):
             quantity = qs_item["quantity"]
             all_questions = [i.id for i in Question.objects.filter(subject=subject)]
             random.shuffle(all_questions)
-            while len(all_questions) < quantity:
-                all_questions += all_questions
+            if len(all_questions) > 0:
+                while len(all_questions) < quantity:
+                    all_questions += all_questions
             for q_id in all_questions[:quantity]:
                 question = Question.objects.get(pk=q_id)
                 assigned = AssignedQuestion()

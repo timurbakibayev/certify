@@ -12,8 +12,12 @@
             <div class="modal-header" style="flex-flow: row-reverse;">
                 <span style="text-align: right">Вопрос {{ question_number }} из {{ questions_total }}, время: <span id="time_left"></span></span>
             </div>
-            <div class="modal-header">
-                <h3>{% latexify question_text parse_math=True %}</h3>
+            <div class="modal-header" style="flex-flow: column">
+                <div class="noselect" >
+                {% for question_line in question_lines %}
+                <span style="padding-left: {{ question_line.padding }}em; font-size: 2em">{% latexify question_line.text parse_math=True %}<br></span>
+                {% endfor %}
+                </div>
             </div>
             <div class="modal-body">
                 <div class="col-xs-3 col-xs-offset-5">

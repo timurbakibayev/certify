@@ -51,7 +51,7 @@
                 {% else %}
                     <td>-</td>
                 {% endif %}
-                <td>{{ assignment.score_percent }}</td>
+                <td><a href="/test_results/{{ assignment.id }}">{{ assignment.score_percent }}</a></td>
             </tr>
         {% endfor %}
     </table>

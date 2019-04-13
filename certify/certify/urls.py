@@ -28,6 +28,8 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   path('question', views.question),
                   path('logout', views.log_me_out),
                   path('reply/<int:number>', quiz_flow.reply),
+                  path('test_question/<int:number>', quiz_flow.test_question),
+                  path('test_results/<int:number>', quiz_flow.test_results),
                   path('start_quiz', quiz_flow.start),
                   path('time_left', quiz_flow.time_left_http),
               ]

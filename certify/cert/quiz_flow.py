@@ -56,7 +56,6 @@ def index(request):
 
         return render(request, "results.html", context)
 
-
     question_number = len(AssignedQuestion.objects.filter(assignment=ass).filter(answered=False))
     questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
     question_number = questions_total - question_number + 1
@@ -69,6 +68,10 @@ def index(request):
                "answer4": latexify(ass.current_question.answer4),
                "question_number": question_number,
                "questions_total": questions_total,
+               "question_lines": [
+                   {"text": latexify(i), "padding": str((len(i) - len(i.lstrip())) / 2)} for i in
+                   ass.current_question.question.split("\n")
+               ]
                }
 
     if ass.finished:
@@ -172,3 +175,61 @@ def time_left_http(request):
         human = f"{time_left(request) // 60} м"
 
     return HttpResponse(human)
+
+
+def test_question(request, number):
+    question = Question.objects.get(pk=number)
+    context = {"question": question,
+               "question_text": latexify(question.question),
+               "answer1": latexify(question.answer1),
+               "answer2": latexify(question.answer2),
+               "answer3": latexify(question.answer3),
+               "answer4": latexify(question.answer4),
+               "question_number": 1,
+               "questions_total": 10,
+               "question_lines": [
+                   {"text":latexify(i), "padding":str((len(i)-len(i.lstrip()))/2)} for i in question.question.split("\n")
+               ]
+               }
+
+    return render(request, "question.html", context)
+
+
+def test_results(request, number):
+    ass = Assignment.objects.get(pk=number)
+    questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
+
+    qs = ass.quiz_structure
+    qs_list = [
+        {"subject": qs.subject1, "quantity": qs.quantity1},
+        {"subject": qs.subject2, "quantity": qs.quantity2},
+        {"subject": qs.subject3, "quantity": qs.quantity3},
+        {"subject": qs.subject4, "quantity": qs.quantity4},
+        {"subject": qs.subject5, "quantity": qs.quantity5},
+        {"subject": qs.subject6, "quantity": qs.quantity6},
+        {"subject": qs.subject7, "quantity": qs.quantity7},
+        {"subject": qs.subject8, "quantity": qs.quantity8},
+        {"subject": qs.subject9, "quantity": qs.quantity9},
+        {"subject": qs.subject10, "quantity": qs.quantity10},
+        {"subject": qs.subject11, "quantity": qs.quantity11},
+        {"subject": qs.subject12, "quantity": qs.quantity12},
+    ]
+    subjects = []
+    for qs_item in qs_list:
+        if qs_item["quantity"] > 0:
+            subject = qs_item["subject"]
+            assignments = AssignedQuestion.objects.filter(assignment=ass).filter(question__subject=subject)
+            subjects.append({
+                "name": subject.name,
+                "quantity": len(assignments),
+                "correct": len(assignments.filter(correct=True)),
+                "percent": int(len(assignments.filter(correct=True))/len(assignments)*100),
+            })
+
+
+    context = {"person": ass.person, "assignment": ass,
+               "questions_total": questions_total,
+               "subjects": subjects,
+               }
+
+    return render(request, "results_detailed.html", context)

@@ -1,104 +1,95 @@
+
 <!DOCTYPE html>
-<html>
-{% load latexify %}
+
+<html lang="ru-ru" >
 <head>
-    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
-    {% include "css_loads.html" %}
+<title>Система тестирования {{ title }}</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
+<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css">
+
+
+
+
+
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css">
+
+
+<meta name="robots" content="NONE,NOARCHIVE">
 </head>
-<body>
-<div class="container-fluid">
-    <div class="modal-dialog auth-form" >
-        <div class="modal-content">
-            <div class="modal-header">
-                Система тестирования {{ title }}
-            </div>
-            <div class="modal-body">
-                <div class="quiz">
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="operation" value="login">
-                        <label class="btn-lg  btn-block" style="display: flex; flex-flow: column">
-                            Имя пользователя <input name="username" id="username" style="border-radius: .3em" autofocus>
-                        </label>
-                        <label class="btn-lg btn-block" style="display: flex; flex-flow: column">
-                            Пароль <input name="password" type="password" id="password" style="border-radius: .3em">
-                        </label>
-                        <label class="btn-lg btn-block">
-                            <button class="btn btn-primary" type="submit">Вход</button>
-                        </label>
-                        <span class="alert warning" style="color: red">
+
+
+<body class=" login"
+  data-admin-utc-offset="21600">
+
+<!-- Container -->
+<div id="container">
+
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+
+<h1 id="site-name"><a href="#">Система тестирования {{ title }}</a></h1>
+
+        </div>
+
+
+    </div>
+    <!-- END Header -->
+
+
+
+
+
+
+
+    <!-- Content -->
+    <div id="content" class="colM">
+
+
+
+
+
+
+
+<div id="content-main">
+
+
+
+<form method="post" id="login-form">
+    {% csrf_token %}
+<input type="hidden" name="operation" value="login">
+  <div class="form-row">
+
+    <label class="required" for="id_username">Имя пользователя:</label> <input type="text" name="username" autofocus required id="id_username">
+  </div>
+  <div class="form-row">
+
+    <label class="required" for="id_password">Пароль:</label> <input type="password" name="password" required id="id_password">
+    <input type="hidden" name="next" value="/admin/">
+  </div>
+  <div class="form-row">
+    <span class="alert warning" style="color: red">
                             {% if failed_login %}Неверное имя пользователя или пароль{% endif %}
                         </span>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
+
+  <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="Войти">
+  </div>
+</form>
+
 </div>
-<script language="JavaScript">
-    const answer = (chosen) => {
-        console.log(chosen);
-        fadeOut(document.getElementById("quiz"), 500);
-        fetch(`/reply/${chosen}`).then(() => {
-            setTimeout(() => {
-                window.location = "/";
-            }, 1000);
-        });
-    };
 
 
-    function fadeIn(elem, ms) {
-        if (!elem)
-            return;
+        <br class="clear">
+    </div>
+    <!-- END Content -->
 
-        elem.style.opacity = 0;
-        elem.style.filter = "alpha(opacity=0)";
-        elem.style.display = "inline-block";
-        elem.style.visibility = "visible";
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
 
-        if (ms) {
-            var opacity = 0;
-            var timer = setInterval(function () {
-                opacity += 50 / ms;
-                if (opacity >= 1) {
-                    clearInterval(timer);
-                    opacity = 1;
-                }
-                elem.style.opacity = opacity;
-                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-            }, 50);
-        } else {
-            elem.style.opacity = 1;
-            elem.style.filter = "alpha(opacity=1)";
-        }
-    }
-
-    function fadeOut(elem, ms) {
-        if (!elem)
-            return;
-
-        if (ms) {
-            var opacity = 1;
-            var timer = setInterval(function () {
-                opacity -= 50 / ms;
-                if (opacity <= 0) {
-                    clearInterval(timer);
-                    opacity = 0;
-                    elem.style.display = "none";
-                    elem.style.visibility = "hidden";
-                }
-                elem.style.opacity = opacity;
-                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-            }, 50);
-        } else {
-            elem.style.opacity = 0;
-            elem.style.filter = "alpha(opacity=0)";
-            elem.style.display = "none";
-            elem.style.visibility = "hidden";
-        }
-    }
-
-</script>
-{% include "latexify/scripts.html" %}
 </body>
 </html>

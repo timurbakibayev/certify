@@ -18,7 +18,7 @@ class Subject(models.Model):
     name = models.CharField(max_length=100, default="", blank=True, null=True)
 
     def __str__(self):
-        return f"{self.code}: {self.name}"
+        return f"{self.code}: {self.name}, {len(Question.objects.filter(subject=self))} вопросов"
 
 
 class Question(models.Model):

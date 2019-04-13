@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+{% load latexify %}
+<head>
+    {% include "css_loads.html" %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="modal-dialog" style="width: 80%; zoom: 1.5">
+        <div class="modal-content">
+            <div class="modal-header">
+                Тестирование: {{ assignment.quiz_structure.name }}
+            </div>
+            <div class="modal-header">
+                {{ assignment.person.last_name }} {{ assignment.person.first_name }}<br>
+            </div>
+            <div class="modal-body">
+                <div class="quiz">
+                    <span>
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                          <path class="circle_full"
+                                stroke-dasharray="100, 100"
+                                d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <path class="circle"
+                                stroke-dasharray="{{ assignment.score_percent }}, 100"
+                                d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                            <text text-anchor="middle" x="18" y="20" font-family="Verdana" font-size="10"
+                                  fill="blue">{{ assignment.score_percent }}%</text>
+                            <style>
+                                .circle {
+                                    stroke: #4CC790;
+                                    fill: none;
+                                    stroke-width: 2.8;
+                                    stroke-linecap: round;
+                                    animation: progress 1s ease-out forwards;
+                                }
+
+                                .circle_full {
+                                    stroke: #1b0ec7;
+                                    fill: none;
+                                    stroke-width: 2.8;
+                                    stroke-linecap: round;
+                                }
+
+                                @keyframes progress {
+                                    0% {
+                                        stroke-dasharray: 0 100;
+                                    }
+                                }
+                            </style>
+                        </svg>
+                    </span>
+                    <table class="table">
+                        <tr>
+                            <th>Предмет</th>
+                            <th>Кол-во</th>
+                            <th>Правильных</th>
+                            <th>Процент</th>
+                        </tr>
+                        {% for subject in subjects %}
+                            <tr>
+                                <td>{{ subject.name }}</td>
+                                <td>{{ subject.quantity }}</td>
+                                <td>{{ subject.correct }}</td>
+                                <td>{{ subject.percent }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <a href="/">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    const quit_quiz = () => {
+        fadeOut(document.getElementById("quiz"), 500);
+        fetch("/logout").then(() => {
+            setTimeout(() => {
+                window.location = "http://yessenovfoundation.org";
+            }, 1000);
+        });
+    };
+
+    function fadeOut(elem, ms) {
+        if (!elem)
+            return;
+
+        if (ms) {
+            var opacity = 1;
+            var timer = setInterval(function () {
+                opacity -= 50 / ms;
+                if (opacity <= 0) {
+                    clearInterval(timer);
+                    opacity = 0;
+                    elem.style.display = "none";
+                    elem.style.visibility = "hidden";
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 0;
+            elem.style.filter = "alpha(opacity=0)";
+            elem.style.display = "none";
+            elem.style.visibility = "hidden";
+        }
+    }
+
+</script>
+{% include "latexify/scripts.html" %}
+</body>
+</html>

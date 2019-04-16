@@ -26,17 +26,18 @@
     </div>
 </nav>
 
-<div class="container">
-    <table class="table">
+<div class="container" style="margin-left: 0em; margin-right: 0em; max-width: none">
+    <table class="table" style="margin: 1em">
         <tr>
             <th>ИИН</th>
             <th>Фамилия</th>
             <th>Имя</th>
             <th>Тест</th>
-            <th>Логин</th>
             <th>Пароль</th>
+            <th>Email</th>
             <th>Дата прохождения</th>
             <th>Результат</th>
+            <th>Изменение</th>
         </tr>
         {% for assignment in assignments %}
             <tr>
@@ -44,14 +45,27 @@
                 <td>{{ assignment.person.last_name }}</td>
                 <td>{{ assignment.person.first_name }}</td>
                 <td>{{ assignment.quiz_structure.name }}</td>
-                <td>{{ assignment.person.user.username }}</td>
                 <td>{{ assignment.person.password }}</td>
+                <td>{{ assignment.person.email }}</td>
                 {% if assignment.finished_date_time %}
                     <td>{{ assignment.finished_date_time }}</td>
                 {% else %}
                     <td>-</td>
                 {% endif %}
                 <td><a href="/test_results/{{ assignment.id }}">{{ assignment.score_percent }}</a></td>
+                <td><img src="/static/img/edit.png" width="24px" height="24px" onclick="
+                        editAss(
+                        '{{ assignment.person.iin }}',
+                        '{{ assignment.person.last_name }}',
+                        '{{ assignment.person.first_name }}',
+                        '{{ assignment.quiz_structure.id }}',
+                        '{{ assignment.person.email }}',
+                        )">
+                    <img src="/static/img/delete.png" width="24px" height="24px" onclick="
+                            deleteAss(
+                            '{{ assignment.person.iin }}',
+                            )">
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -80,6 +94,7 @@
                     <input class="form-control" type="text" name="iin" placeholder="ИИН" autofocus>
                     <input class="form-control" type="text" name="last_name" placeholder="Фамилия" autofocus>
                     <input class="form-control" type="text" name="first_name" placeholder="Имя" autofocus>
+                    <input class="form-control" type="email" name="email" placeholder="Email" autofocus>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Добавить</button>
@@ -88,6 +103,51 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="editAssignment">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить данные</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <select class="custom-select" name="quiz" id="quiz">
+                        <option value="-1"></option>
+                        {% for quiz_structure in quiz_structures %}
+                            <option value="{{ quiz_structure.id }}">{{ quiz_structure.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input class="form-control" type="hidden" name="edit" id="edit" value="1">
+                    <input class="form-control" type="text" name="iin" id="iin" placeholder="ИИН" autofocus>
+                    <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Фамилия"
+                           autofocus>
+                    <input class="form-control" type="text" name="first_name" id="first_name" placeholder="Имя"
+                           autofocus>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Email" autofocus>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    const editAss = (iin, last_name, first_name, structure_id, email) => {
+        $('#editAssignment').modal('show');
+        $('#iin').val(iin);
+        $('#first_name').val(first_name);
+        $('#last_name').val(last_name);
+        $('#quiz').val(structure_id);
+        $('#email').val(email);
+    }
+</script>
 
 {% include "latexify/scripts.html" %}
 </body>

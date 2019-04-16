@@ -38,6 +38,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=1000, null=False, blank=False)
     first_name = models.CharField(max_length=1000, null=False, blank=False)
     birth_date = models.DateField(default="2019-01-01")
+    email = models.CharField(max_length=100, default="", blank=True, null=True)
     user = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING)
     iin = models.CharField(max_length=12, null=False, blank=False)
     state = models.CharField(max_length=10, default="idle")
@@ -45,6 +46,16 @@ class Person(models.Model):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}, ИИН: {self.iin}, Тестов: { Assignment.objects.filter(person=self) }"
+
+
+class SendEmail(models.Model):
+    email = models.CharField(max_length=100, default="")
+    subject = models.CharField(max_length=100, default="")
+    text = models.TextField(max_length=10000, default="")
+    sent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.email + ": " + ("","OK")[self.sent]
 
 
 class QuizStructure(models.Model):

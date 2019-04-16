@@ -28,6 +28,7 @@ def index(request):
             iin = request.POST.get("iin")
             last_name = request.POST.get("last_name")
             first_name = request.POST.get("first_name")
+            email = request.POST.get("email")
             if len(iin) > 0:
                 same_persons = Person.objects.filter(iin=iin)
                 if len(same_persons) > 0:
@@ -40,18 +41,21 @@ def index(request):
                     new_user.save()
                     person = Person()
                     person.iin = iin
-                    person.first_name = first_name
-                    person.last_name = last_name
                     person.user = new_user
                     person.password = password
-                    person.save()
-                ass = Assignment()
-                ass.person = person
-                ass.quiz_structure = quiz
-                ass.assigned_by = user
-                ass.assigned_to = person.user
-                ass.save()
-                return redirect("/")
+                person.first_name = first_name
+                person.last_name = last_name
+                person.email = email
+                person.save()
+
+                if request.POST.get("edit","") == "":
+                    ass = Assignment()
+                    ass.person = person
+                    ass.quiz_structure = quiz
+                    ass.assigned_by = user
+                    ass.assigned_to = person.user
+                    ass.save()
+                    return redirect("/")
         except Exception as e:
             return redirect("/")
 

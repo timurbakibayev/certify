@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from cert import adminka
 from cert import quiz_flow
 from cert.models import Assignment
+from cert.email import send_email_from_gmail
 
 latexify = lambda x: x.replace("$","\$")
 
@@ -60,11 +61,45 @@ def deleteAssignment(request, number):
     assignment.hidden = True
     assignment.save()
 
-def sendEmail(request, number):
+
+def subject_text(assignment):
+    return f"Тестирование: {assignment.quiz_structure.name}"
+
+
+def body_text(assignment):
+    the_text = ""
+    the_text += f"Здравствуйте, {assignment.person.first_name}!<br>"
+    the_text += f"<br>"
+    the_text += f"Добро пожаловать в центр тестирования Алматы Менеджмент Университета!<br>"
+    the_text += f"<br>"
+    the_text += f"Название теста: {assignment.quiz_structure.name}<br>"
+    the_text += f"Длительность: {assignment.quiz_structure.minutes} минут<br>"
+    the_text += f"Кол-во вопросов: {assignment.quiz_structure.quantity()}<br>"
+    the_text += f"<br>"
+    the_text += f"Для начала тестирования зайдите на сайт " \
+        f"<a href='https://exam.almau.edu.kz'>https://exam.almau.edu.kz</a> " \
+        f"и наберите следующие логин и пароль:<br>"
+    the_text += f"Логин: {assignment.person.user.username}<br>"
+    the_text += f"Пароль: {assignment.person.password}<br>"
+    the_text += f"<br>"
+    the_text += f"Данный тест необходимо пройти до 19 апреля 2019 г, 23:59. <br>"
+    the_text += f"<br>"
+    the_text += f"С уважением,<br>"
+    the_text += f"Алматы Менеджмент Университет<br>"
+    return the_text
+
+
+def send_email(request, number):
     user = request.user
     if not user.is_authenticated:
-        return redirect("/")
+        return HttpResponse(f"Failed: unathorized")
     if not user.is_staff:
-        return redirect("/")
-    assignment = Assignment.objects.get(pk=number)
-    assignment.save()
+        return HttpResponse(f"Failed: unathorized")
+    try:
+        assignment = Assignment.objects.get(pk=number)
+        send_email_from_gmail(assignment.person.email, subject_text(assignment), body_text(assignment))
+        assignment.emailed = True
+        assignment.save()
+        return HttpResponse("OK")
+    except Exception as e:
+        return HttpResponse(f"Failed: {e}")

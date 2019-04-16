@@ -49,13 +49,14 @@ class Person(models.Model):
 
 
 class SendEmail(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     email = models.CharField(max_length=100, default="")
     subject = models.CharField(max_length=100, default="")
     text = models.TextField(max_length=10000, default="")
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.email + ": " + ("","OK")[self.sent]
+        return self.email + ": " + ("", "OK")[self.sent]
 
 
 class QuizStructure(models.Model):
@@ -110,6 +111,7 @@ class Assignment(models.Model):
     certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.DO_NOTHING)
     current_question = models.ForeignKey(Question, blank=True, null=True, on_delete=models.DO_NOTHING)
     hidden = models.BooleanField(default=False)
+    emailed = models.BooleanField(default=False)
 
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:

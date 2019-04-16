@@ -66,10 +66,20 @@
                             '{{ assignment.id }}',
                             '{{ assignment.person.last_name }}',
                             )">
+                    {% if assignment.emailed %}
+                    <img src="/static/img/email_ok.png" width="24px" height="24px" onclick="
+                            sendEmailAgain(
+                            '{{ assignment.id }}',
+                            this
+                            )">
+                    {% else %}
                     <img src="/static/img/email.png" width="24px" height="24px" onclick="
                             sendEmail(
                             '{{ assignment.id }}',
+                            this
                             )">
+                    {% endif %}
+                    <img src="">
                 </td>
             </tr>
         {% endfor %}
@@ -174,10 +184,29 @@
             })
         }
     };
-    const sendEmail = (id) => {
-        fetch(`/send_email/${id}`).then(() => {
-            window.location = "/";
-        })
+    let sentIds = [];
+    const sendEmail = async (id, image) => {
+        if (!sentIds.includes(id)) {
+            sentIds.push(id);
+            image.src = "/static/img/sending.gif";
+            let result = await fetch(`/send_email/${id}`);
+            let text = await result.text();
+            // alert(text);
+            if (text === "OK") {
+                image.src = "/static/img/email_ok.png";
+            } else {
+                alert(text);
+            }
+        } else {
+            alert("Уже отправлено. Для повторной отправки обновите страницу (F5) и нажмите на конверт ещё раз.");
+        }
+    };
+    const sendEmailAgain = async (id, image) => {
+        image.src = "/static/img/sending.gif";
+        let result = await fetch(`/send_email/${id}`);
+        let text = await result.text();
+        image.src = "/static/img/email_ok.png";
+        alert("Повторная отправка: " + text);
     };
 </script>
 

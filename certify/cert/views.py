@@ -42,9 +42,7 @@ def question(request):
     if not user.is_authenticated:
         return redirect("/")
 
-    context = {
-        "question": latexify("Что такое $x^2$ Data Science?"), "answer1": latexify("d$\\frac{1}{2}$"), "answer2": "Раковина", "answer3": "Зеркало",
-                "answer4": "Вода", "correct": 4}
+    context = {}
 
     context["course_name"] = "Yessenov Data Lab Test"
     return render(request, "question.html", context)
@@ -82,7 +80,7 @@ def body_text(assignment):
     the_text += f"Логин: {assignment.person.user.username}<br>"
     the_text += f"Пароль: {assignment.person.password}<br>"
     the_text += f"<br>"
-    the_text += f"Данный тест необходимо пройти до 19 апреля 2019 г, 23:59. <br>"
+    the_text += f"Данный тест необходимо пройти до 21 апреля 2019 г, 23:59. <br>"
     the_text += f"<br>"
     the_text += f"С уважением,<br>"
     the_text += f"Алматы Менеджмент Университет<br>"

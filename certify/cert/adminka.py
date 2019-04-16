@@ -48,19 +48,19 @@ def index(request):
                 person.email = email
                 person.save()
 
-                if request.POST.get("edit","") == "":
+                if request.POST.get("edit", "") == "":
                     ass = Assignment()
                     ass.person = person
                     ass.quiz_structure = quiz
                     ass.assigned_by = user
                     ass.assigned_to = person.user
                     ass.save()
-                    return redirect("/")
+                return redirect("/")
         except Exception as e:
             return redirect("/")
 
     context = {}
-    assignments = Assignment.objects.filter(assigned_by=user)
+    assignments = Assignment.objects.filter(hidden=False).filter(assigned_by=user)
     quizes = QuizStructure.objects.all()
 
     if len(assignments) > 0:

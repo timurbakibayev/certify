@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import login, logout, authenticate
 from cert import adminka
 from cert import quiz_flow
+from cert.models import Assignment
 
 latexify = lambda x: x.replace("$","\$")
 
@@ -46,3 +47,24 @@ def question(request):
 
     context["course_name"] = "Yessenov Data Lab Test"
     return render(request, "question.html", context)
+
+
+def deleteAssignment(request, number):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("/")
+    if not user.is_staff:
+        return redirect("/")
+
+    assignment = Assignment.objects.get(pk=number)
+    assignment.hidden = True
+    assignment.save()
+
+def sendEmail(request, number):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect("/")
+    if not user.is_staff:
+        return redirect("/")
+    assignment = Assignment.objects.get(pk=number)
+    assignment.save()

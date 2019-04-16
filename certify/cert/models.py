@@ -109,6 +109,7 @@ class Assignment(models.Model):
     total_time = models.IntegerField(default=0)
     certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.DO_NOTHING)
     current_question = models.ForeignKey(Question, blank=True, null=True, on_delete=models.DO_NOTHING)
+    hidden = models.BooleanField(default=False)
 
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:

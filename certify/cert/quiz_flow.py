@@ -179,6 +179,9 @@ def time_left_http(request):
 
 
 def test_question(request, number):
+    user = request.user
+    if not user.is_authenticated or not user.is_staff:
+        return redirect("/")
     question = Question.objects.get(pk=number)
     context = {"question": question,
                "question_text": latexify(question.question),

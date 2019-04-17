@@ -68,13 +68,13 @@ def body_text(assignment):
     the_text = ""
     the_text += f"Здравствуйте, {assignment.person.first_name}!<br>"
     the_text += f"<br>"
-    the_text += f"Добро пожаловать в центр тестирования Алматы Менеджмент Университета!<br>"
+    the_text += f"Добро пожаловать в центр тестирования летней школы YDL!<br>"
     the_text += f"<br>"
     the_text += f"Название теста: {assignment.quiz_structure.name}<br>"
     the_text += f"Длительность: {assignment.quiz_structure.minutes} минут<br>"
     the_text += f"Кол-во вопросов: {assignment.quiz_structure.quantity()}<br>"
     the_text += f"<br>"
-    the_text += f"Для начала тестирования зайдите на сайт " \
+    the_text += f"Для начала тестирования зайдите на сайт генерального партнёра летней школы " \
         f"<a href='https://exam.almau.edu.kz'>https://exam.almau.edu.kz</a> " \
         f"и наберите следующие логин и пароль:<br>"
     the_text += f"Логин: {assignment.person.user.username}<br>"
@@ -83,7 +83,8 @@ def body_text(assignment):
     the_text += f"Данный тест необходимо пройти до 21 апреля 2019 г, 23:59. <br>"
     the_text += f"<br>"
     the_text += f"С уважением,<br>"
-    the_text += f"Алматы Менеджмент Университет<br>"
+    the_text += f"Команда научно-образовательного фонда<br>"
+    the_text += f"им. академика Ш. Есенова<br>"
     return the_text
 
 

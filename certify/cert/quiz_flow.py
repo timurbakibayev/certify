@@ -200,6 +200,9 @@ def test_question(request, number):
 
 
 def test_results(request, number):
+    user = request.user
+    if not user.is_authenticated or not user.is_staff:
+        return redirect("/")
     ass = Assignment.objects.get(pk=number)
     questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
 
@@ -237,3 +240,17 @@ def test_results(request, number):
                }
 
     return render(request, "results_detailed.html", context)
+
+def questions_list(request, number):
+    user = request.user
+    if not user.is_authenticated or not user.is_staff:
+        return redirect("/")
+
+    ass = Assignment.objects.get(pk=number)
+    questions = AssignedQuestion.objects.filter(assignment=ass)
+
+    context = {"person": ass.person, "assignment": ass,
+               "questions": questions,
+               }
+
+    return render(request, "questions_list.html", context)

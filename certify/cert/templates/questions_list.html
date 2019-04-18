@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+{% load latexify %}
+<head>
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
+    {% include "css_loads.html" %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Test System</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><p class="nav-link">{{ user.username }}</p></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container" style="margin-left: 0em; margin-right: 0em; max-width: none">
+    <div>ФИО: {{ assignment.person.last_name }} {{ assignment.person.first_name }}</div>
+    <table class="table" style="margin: 1em">
+        <tr>
+            <th>N</th>
+            <th>Предмет</th>
+            <th>Вопрос</th>
+            <th>Правильный ответ</th>
+            <th>Ответ студента</th>
+            <th>Правильно</th>
+            <th>Форма</th>
+        </tr>
+        {% for assigned_question in questions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ assigned_question.question.subject.name }}</td>
+                <td>{{ assigned_question.question.question }}</td>
+                <td>{{ assigned_question.question.correct_1_to_4 }}</td>
+                <td>{{ assigned_question.answer }}</td>
+                <td>{% if assigned_question.correct %}<img src="/static/img/correct.png" width="24px" height="24px">{% endif %}</td>
+                <td><a href="/test_question/{{ assigned_question.question.id }}">Посмотреть</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#addAssignment">Добавить</button>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="addAssignment">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить тест</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <select class="custom-select" name="quiz">
+                        <option selected value="{{ default_value }}">{{ default_text }}</option>
+                        {% for quiz_structure in quiz_structures %}
+                            <option value="{{ quiz_structure.id }}">{{ quiz_structure.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input class="form-control" type="text" name="iin" placeholder="ИИН" autofocus>
+                    <input class="form-control" type="text" name="last_name" placeholder="Фамилия" >
+                    <input class="form-control" type="text" name="first_name" placeholder="Имя" >
+                    <input class="form-control" type="email" name="email" placeholder="Email" >
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="editAssignment">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить данные</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <select class="custom-select" name="quiz" id="quiz" hidden>
+                        <option value="-1"></option>
+                        {% for quiz_structure in quiz_structures %}
+                            <option value="{{ quiz_structure.id }}">{{ quiz_structure.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input class="form-control" type="hidden" name="edit" id="edit" value="1">
+                    <input class="form-control" type="hidden" name="iin" id="iin" placeholder="ИИН" >
+                    <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Фамилия"
+                           >
+                    <input class="form-control" type="text" name="first_name" id="first_name" placeholder="Имя"
+                           >
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Email" >
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="sending">
+    <div class="modal" tabindex="-1" role="dialog" id="editAssignment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Изменить данные</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    const editAss = (iin, last_name, first_name, structure_id, email) => {
+        $('#editAssignment').modal('show');
+        $('#iin').val(iin);
+        $('#first_name').val(first_name);
+        $('#last_name').val(last_name);
+        $('#quiz').val(structure_id);
+        $('#email').val(email);
+    };
+    const deleteAss = (id, last_name) => {
+        if (window.confirm(`Удалить задание для ${last_name}?`)) {
+            fetch(`/delete/${id}`).then(() => {
+                window.location = "/";
+            })
+        }
+    };
+    let sentIds = [];
+    const sendEmail = async (id, image) => {
+        if (!sentIds.includes(id)) {
+            sentIds.push(id);
+            image.src = "/static/img/sending.gif";
+            let result = await fetch(`/send_email/${id}`);
+            let text = await result.text();
+            // alert(text);
+            if (text === "OK") {
+                image.src = "/static/img/email_ok.png";
+            } else {
+                alert(text);
+            }
+        } else {
+            alert("Уже отправлено. Для повторной отправки обновите страницу (F5) и нажмите на конверт ещё раз.");
+        }
+    };
+    const sendEmailAgain = async (id, image) => {
+        image.src = "/static/img/sending.gif";
+        let result = await fetch(`/send_email/${id}`);
+        let text = await result.text();
+        image.src = "/static/img/email_ok.png";
+        alert("Повторная отправка: " + text);
+    };
+</script>
+
+{% include "latexify/scripts.html" %}
+</body>
+</html>

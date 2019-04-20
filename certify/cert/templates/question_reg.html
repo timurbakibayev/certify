@@ -92,17 +92,6 @@
         }
     };
 
-    const showTime = async () => {
-        result = await fetch("/time_left");
-        document.getElementById("time_left").innerHTML = await result.text();
-    };
-
-    showTime();
-
-    setInterval(async () => {
-        showTime();
-    }, 5000);
-
     function fadeIn(elem, ms) {
         if (!elem)
             return;

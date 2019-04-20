@@ -19,9 +19,9 @@ from certify import settings
 
 
 def regression_start(request):
-    user =request.user
+    user = request.user
     person = Person.objects.get(user=user)
-    check = Assignment.objects.filter(person=person).filter(started_regression=True).filter(finished_regression=False)
+    check = Assignment.objects.filter(person=person).filter(finished=True).filter(started_regression=True).filter(finished_regression=False)
     if len(check) > 0:
         return HttpResponse("Already has an open regression assignment")
     try:
@@ -73,7 +73,7 @@ def show_question(request, ass):
             error_text = "Превышено количество попыток"
         else:
             try:
-                answers = [int(i.strip()) for i in answer.split(",")]
+                answers = [float(i.strip()) for i in answer.split(",")]
                 correct_answers = [int(i.strip()) for i in ass.regression_solution.split(",")]
                 percent_loss = [(correct_answers[i] - answers[i])/correct_answers[i]*100 for i in range(len(answers))]
                 ass.regression_rmse = abs(int(sum(percent_loss)/len(correct_answers) * 100)/100)

@@ -5,7 +5,7 @@ from cert import quiz_flow
 from cert.models import Assignment
 from cert.email import send_email_from_gmail
 
-latexify = lambda x: x.replace("$","\$")
+latexify = lambda x: x.replace("$", "\$")
 
 def log_me_out(request):
     logout(request)
@@ -19,7 +19,7 @@ def index(request):
     if request.method == "POST":
         print("eee", request.POST.get("operation", ""))
         if request.POST.get("operation", "") == "login":
-            user = authenticate(username=request.POST.get("username",""), password=request.POST.get("password", ""))
+            user = authenticate(username=request.POST.get("username", ""), password=request.POST.get("password", ""))
             if user is not None:
                 login(request, user)
                 return redirect("/")
@@ -37,18 +37,7 @@ def index(request):
     return quiz_flow.index(request)
 
 
-def question(request):
-    user = request.user
-    if not user.is_authenticated:
-        return redirect("/")
-
-    context = {}
-
-    context["course_name"] = "Yessenov Data Lab Test"
-    return render(request, "question.html", context)
-
-
-def deleteAssignment(request, number):
+def delete_assignment(request, number):
     user = request.user
     if not user.is_authenticated:
         return redirect("/")

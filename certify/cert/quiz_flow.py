@@ -11,21 +11,29 @@ import string
 from cert.adminka import title
 import datetime
 from pytz import timezone
+from cert import regression
 
 latexify = lambda x: x.replace("$","\$")
+
 
 def index(request):
     user = request.user
     person = Person.objects.get(user=user)
+
     try:
         ass = Assignment.objects.filter(person=person).filter(finished=False)[0]
     except:
-        ass = Assignment.objects.filter(person=person).filter(finished=True)[len(Assignment.objects.filter(person=person).filter(finished=True))-1]
+        ass = Assignment.objects.filter(person=person)[len(Assignment.objects.filter(person=person))-1]
         questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
         context = {"person": person, "assignment": ass,
                    "questions_total": questions_total,
                    }
-        return render(request, "results.html", context)
+        if not ass.started_regression:
+            return render(request, "results.html", context)
+        elif ass.finished_regression:
+            return render(request, "results_with_regression.html", context)
+        else:
+            return regression.show_question(request, ass)
 
     context = {"person": person, "assignment": ass}
 
@@ -48,13 +56,7 @@ def index(request):
         ass.finished_date_time = datetime.datetime.now()
         ass.score = len(AssignedQuestion.objects.filter(assignment=ass).filter(correct=True))
         ass.save()
-
-        questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
-        context = {"person": person, "assignment": ass,
-                   "questions_total": questions_total,
-                   }
-
-        return render(request, "results.html", context)
+        return redirect("/")
 
     question_number = len(AssignedQuestion.objects.filter(assignment=ass).filter(answered=False))
     questions_total = len(AssignedQuestion.objects.filter(assignment=ass))

@@ -14,6 +14,9 @@
             <div class="modal-header">
                 Вы правильно ответили на {{ assignment.score }} вопросов<br>
             </div>
+            <div class="modal-header">
+                Ваш балл за задачу по регрессии {{ assignment.regression_result }}%<br>
+            </div>
             <div class="modal-body">
                 <div class="quiz" id="quiz" data-toggle="buttons">
                     <span>
@@ -55,10 +58,48 @@
                                 }
                             </style>
                         </svg>
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                          <path class="circle_full"
+                                stroke-dasharray="100, 100"
+                                d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                          <path class="circle"
+                                stroke-dasharray="{{ assignment.regression_result }}, 100"
+                                d="M18 2.0845
+                              a 15.9155 15.9155 0 0 1 0 31.831
+                              a 15.9155 15.9155 0 0 1 0 -31.831"
+                          />
+                            <text text-anchor="middle" x="18" y="20" font-family="Verdana" font-size="10"
+                                  fill="blue">{{ assignment.regression_result }}%</text>
+                            <style>
+                                .circle {
+                                    stroke: #4CC790;
+                                    fill: none;
+                                    stroke-width: 2.8;
+                                    stroke-linecap: round;
+                                    animation: progress 1s ease-out forwards;
+                                }
+
+                                .circle_full {
+                                    stroke: #1b0ec7;
+                                    fill: none;
+                                    stroke-width: 2.8;
+                                    stroke-linecap: round;
+                                }
+
+                                @keyframes progress {
+                                    0% {
+                                        stroke-dasharray: 0 100;
+                                    }
+                                }
+                            </style>
+                        </svg>
                     </span>
-                    <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="regression()"><span
+                    <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="quit_quiz()"><span
                             class="btn-label"><i class="glyphicon glyphicon-chevron-right"
-                    ></i></span>Перейти к задаче на регрессию</label>
+                    ></i></span>До свидания!</label>
                 </div>
             </div>
         </div>

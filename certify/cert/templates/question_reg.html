@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+{% load latexify %}
+<head>
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
+    {% include "css_loads.html" %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="modal-dialog" style="width: 100%; zoom: 0.8; max-width: 1024px">
+        <div class="modal-content">
+            <div class="modal-header" style="flex-flow: row-reverse;">
+                <span style="text-align: right">Задача на линейную регрессию</span>
+            </div>
+            <div class="modal-header" style="display: block; font-size: 2em">
+                Дано два файла с данными. В первом файле <a
+                    href="/media/{{ ass.regression_task }}_train.csv">{{ ass.regression_task }}_train.csv</a>
+                100 строк и 6 столбцов:
+                x1,x2,x3,x4,x5,f, где f - стоимость продукта, а x1,...,x5 - его характеристики. Во втором файле
+                <a href="/media/{{ ass.regression_task }}_test.csv">{{ ass.regression_task }}_test.csv</a> 20 строк и
+                только 5 столбцов, т.к.
+                отсутствует столбец f. Необходимо определить стоимость этих 20 продуктов и перечислить их через запятую
+                в поле ниже.
+                Например: 1,5,3,5,7,44,3,2,9,10,22,12,33,21,245,2,12,34,29,10
+            </div>
+            <div class="modal-header" style="display: block; font-size: 2em">
+                <div>Все числа неотрицательные. Если у вас получились дробные числа, разделителем дробной части должна
+                    быть точка.
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="col-xs-3 col-xs-offset-5">
+                    <div id="loadbar" style="display: none;">
+                        <div class="blockG" id="rotateG_01"></div>
+                        <div class="blockG" id="rotateG_02"></div>
+                        <div class="blockG" id="rotateG_03"></div>
+                        <div class="blockG" id="rotateG_04"></div>
+                        <div class="blockG" id="rotateG_05"></div>
+                        <div class="blockG" id="rotateG_06"></div>
+                        <div class="blockG" id="rotateG_07"></div>
+                        <div class="blockG" id="rotateG_08"></div>
+                    </div>
+                </div>
+                <div class="quiz" id="quiz">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="answer" style="width: 100%; font-size: 1.5em">
+                        <button type="submit" style="width: 30%; font-size: 1.5em">Отправить ответ</button>
+                        {% if error_text %}
+                            <span style="color:red">{{ error_text }}</span>
+                        {% endif %}
+                    </form>
+                </div>
+                <div style="font-size: 1.5em">
+                {% if error >= 0 %}
+                    Mean absolute percentage error: {{ error }} (чем меньше, тем лучше)
+                {% else %}
+                    Результат будет измеряться с помощью среднего процентного отклонения
+                    <a href="https://en.wikipedia.org/wiki/Mean_absolute_percentage_error">Mean absolute percentage error</a>
+                {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer" style="display: block; font-size: 2em">
+                Осталось попыток: {{ ass.regression_tries_left }} <button class="btn btn-primary" style="margin-left: 5em" onclick="finish_regression()">Завершить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    const answer = (chosen) => {
+        console.log(chosen);
+        fadeOut(document.getElementById("quiz"), 500);
+        fetch(`/reply/${chosen}`).then(() => {
+            setTimeout(() => {
+                window.location = "/";
+            }, 1000);
+        });
+    };
+
+    const finish_regression = () => {
+        {% if ass.regression_tries_left > 0 %}
+        if (window.confirm("Вы уверены, что хотите завершить тестирование? У вас осталось ещё {{ ass.regression_tries_left }} попыток.")) {
+        {% else %}
+        if (2+2==4) {
+        {% endif %}
+            fadeOut(document.getElementById("quiz"), 500);
+            fetch(`/finish_regression`).then(() => {
+                setTimeout(() => {
+                    window.location = "/";
+                }, 1000);
+            });
+        }
+    };
+
+    const showTime = async () => {
+        result = await fetch("/time_left");
+        document.getElementById("time_left").innerHTML = await result.text();
+    };
+
+    showTime();
+
+    setInterval(async () => {
+        showTime();
+    }, 5000);
+
+    function fadeIn(elem, ms) {
+        if (!elem)
+            return;
+
+        elem.style.opacity = 0;
+        elem.style.filter = "alpha(opacity=0)";
+        elem.style.display = "inline-block";
+        elem.style.visibility = "visible";
+
+        if (ms) {
+            var opacity = 0;
+            var timer = setInterval(function () {
+                opacity += 50 / ms;
+                if (opacity >= 1) {
+                    clearInterval(timer);
+                    opacity = 1;
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 1;
+            elem.style.filter = "alpha(opacity=1)";
+        }
+    }
+
+    function fadeOut(elem, ms) {
+        if (!elem)
+            return;
+
+        if (ms) {
+            var opacity = 1;
+            var timer = setInterval(function () {
+                opacity -= 50 / ms;
+                if (opacity <= 0) {
+                    clearInterval(timer);
+                    opacity = 0;
+                    elem.style.display = "none";
+                    elem.style.visibility = "hidden";
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 0;
+            elem.style.filter = "alpha(opacity=0)";
+            elem.style.display = "none";
+            elem.style.visibility = "hidden";
+        }
+    }
+
+</script>
+{% include "latexify/scripts.html" %}
+</body>
+</html>

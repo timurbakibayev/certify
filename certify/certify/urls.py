@@ -18,6 +18,7 @@ from django.urls import path
 from django.conf.urls.static import static
 from cert import views
 from cert import quiz_flow
+from cert import regression
 from certify import settings
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
@@ -25,13 +26,14 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               [
                   path('admin/', admin.site.urls),
                   path('', views.index),
-                  path('question', views.question),
                   path('logout', views.log_me_out),
+                  path('regression', regression.regression_start),
+                  path('finish_regression', regression.finish_regression),
                   path('reply/<int:number>', quiz_flow.reply),
                   path('test_question/<int:number>', quiz_flow.test_question),
                   path('test_results/<int:number>', quiz_flow.test_results),
                   path('questions_list/<int:number>', quiz_flow.questions_list),
-                  path('delete/<int:number>', views.deleteAssignment),
+                  path('delete/<int:number>', views.delete_assignment),
                   path('send_email/<int:number>', views.send_email),
                   path('start_quiz', quiz_flow.start),
                   path('time_left', quiz_flow.time_left_http),

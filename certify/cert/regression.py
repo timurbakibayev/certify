@@ -21,11 +21,11 @@ from certify import settings
 def regression_start(request):
     user = request.user
     person = Person.objects.get(user=user)
-    check = Assignment.objects.filter(person=person).filter(finished=True).filter(started_regression=True).filter(finished_regression=False)
+    check = Assignment.objects.filter(person=person).filter(hidden=False).filter(finished=True).filter(started_regression=True).filter(finished_regression=False)
     if len(check) > 0:
         return HttpResponse("Already has an open regression assignment")
     try:
-        ass = Assignment.objects.filter(person=person).filter(finished=True).filter(started_regression=False)[0]
+        ass = Assignment.objects.filter(person=person).filter(hidden=False).filter(finished=True).filter(started_regression=False)[0]
         ass.started_regression = True
         ass.started_regression_date_time = datetime.datetime.now()
         ass.regression_task = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
@@ -98,7 +98,7 @@ def show_question(request, ass):
 def finish_regression(request):
     user = request.user
     person = Person.objects.get(user=user)
-    ass = Assignment.objects.filter(person=person)[len(Assignment.objects.filter(person=person)) - 1]
+    ass = Assignment.objects.filter(person=person).filter(hidden=False)[len(Assignment.objects.filter(hidden=False).filter(person=person)) - 1]
     if not ass.finished_regression:
         ass.finished_regression = True
         ass.regression_result = 100 - ass.regression_rmse

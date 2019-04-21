@@ -21,9 +21,9 @@ def index(request):
     person = Person.objects.get(user=user)
 
     try:
-        ass = Assignment.objects.filter(person=person).filter(finished=False)[0]
+        ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(finished=False)[0]
     except:
-        ass = Assignment.objects.filter(person=person)[len(Assignment.objects.filter(person=person))-1]
+        ass = Assignment.objects.filter(hidden=False).filter(person=person)[len(Assignment.objects.filter(hidden=False).filter(person=person))-1]
         questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
         context = {"person": person, "assignment": ass,
                    "questions_total": questions_total,
@@ -90,7 +90,7 @@ def reply(request, number):
         return redirect("/")
     try:
         person = Person.objects.get(user=user)
-        ass = Assignment.objects.filter(person=person).filter(finished=False)[0]
+        ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(finished=False)[0]
         assigned_question = AssignedQuestion.objects.filter(assignment=ass).filter(answered=False)[0]
         assigned_question.answered = True
         assigned_question.answer = number
@@ -111,11 +111,11 @@ def start(request):
     if not user.is_authenticated:
         return redirect("/")
     person = Person.objects.get(user=user)
-    if len(Assignment.objects.filter(person=person).filter(started=True).filter(finished=False)) > 0:
+    if len(Assignment.objects.filter(hidden=False).filter(person=person).filter(started=True).filter(finished=False)) > 0:
         return HttpResponse("Already started")
-    if len(Assignment.objects.filter(person=person).filter(started=False)) == 0:
+    if len(Assignment.objects.filter(hidden=False).filter(person=person).filter(started=False)) == 0:
         return HttpResponse("No test to start")
-    ass = Assignment.objects.filter(person=person).filter(started=False)[0]
+    ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(started=False)[0]
     qs = ass.quiz_structure
     qs_list = [
         {"subject": qs.subject1, "quantity": qs.quantity1},
@@ -159,7 +159,7 @@ def start(request):
 def time_left(request):
     try:
         person = Person.objects.filter(user=request.user)[0]
-        ass = Assignment.objects.filter(person=person).filter(started=True).filter(finished=False)[0]
+        ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(started=True).filter(finished=False)[0]
         timedelta = datetime.datetime.now(timezone("Asia/Almaty")) - ass.started_date_time
         if ass.quiz_structure.minutes * 60 - timedelta.seconds <= 0:
             return 0

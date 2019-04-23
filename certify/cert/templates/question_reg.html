@@ -44,7 +44,7 @@
                 <div class="quiz" id="quiz">
                     <form method="post">
                         {% csrf_token %}
-                        <input type="text" name="answer" style="width: 100%; font-size: 1.5em">
+                        <input type="text" id="answer" name="answer" style="width: 100%; font-size: 1.5em" oninput="finish_button_control()">
                         <button type="submit" style="width: 30%; font-size: 1.5em">Отправить ответ</button>
                         {% if error_text %}
                             <span style="color:red">{{ error_text }}</span>
@@ -53,20 +53,28 @@
                 </div>
                 <div style="font-size: 1.5em">
                 {% if error >= 0 %}
-                    Mean absolute percentage error: {{ error }} (чем меньше, тем лучше)
-                {% else %}
+                    Mean absolute percentage error: {{ error }} (чем меньше, тем лучше) <br>
+                {% endif %}
                     Результат будет измеряться с помощью среднего процентного отклонения
                     <a href="https://en.wikipedia.org/wiki/Mean_absolute_percentage_error">Mean absolute percentage error</a>
-                {% endif %}
+                
                 </div>
             </div>
             <div class="modal-footer" style="display: block; font-size: 2em">
-                Осталось попыток: {{ ass.regression_tries_left }} <button class="btn btn-primary" style="margin-left: 5em" onclick="finish_regression()">Завершить</button>
+                Осталось попыток: {{ ass.regression_tries_left }} <button id="finish_button" class="btn btn-primary" style="margin-left: 5em" onclick="finish_regression()">Завершить</button>
             </div>
         </div>
     </div>
 </div>
 <script language="JavaScript">
+    const finish_button_control = (input_object) => {
+        let text = document.getElementById("answer").value;
+        let button = document.getElementById("finish_button");
+        if (text.length === 0) 
+            button.style.visibility = "visible";
+        else 
+            button.style.visibility = "hidden";
+    }
     const answer = (chosen) => {
         console.log(chosen);
         fadeOut(document.getElementById("quiz"), 500);

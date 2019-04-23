@@ -55,7 +55,7 @@
                 {% endif %}
                 <td><a href="/test_results/{{ assignment.id }}">{{ assignment.score_percent }}</a></td>
                 <td>
-                    {% if assignment.regression_result >= 0 %}
+                    {% if assignment.finished_regression %}
                     {{ assignment.regression_result }}</td>
                     {% else %}
                     -

@@ -52,6 +52,9 @@
                     </form>
                 </div>
                 <div style="font-size: 1.5em">
+                {% if show_current_error %}
+                    Last submission: {{ current_error }}<br>
+                {% endif %}
                 {% if error >= 0 %}
                     Mean absolute percentage error: {{ error }} (чем меньше, тем лучше) <br>
                 {% endif %}

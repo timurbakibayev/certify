@@ -65,6 +65,9 @@ def regression_start(request):
 def show_question(request, ass):
     error_text = ""
 
+    current_error = -1
+    show_current_error = False
+
     if request.method == "POST":
         answer = request.POST.get("answer", "")
         if len(answer.split(",")) != 20:
@@ -76,7 +79,10 @@ def show_question(request, ass):
                 answers = [float(i.strip()) for i in answer.split(",")]
                 correct_answers = [int(i.strip()) for i in ass.regression_solution.split(",")]
                 percent_loss = [(correct_answers[i] - answers[i])/correct_answers[i]*100 for i in range(len(answers))]
-                ass.regression_rmse = abs(int(sum(percent_loss)/len(correct_answers) * 100)/100)
+                current_error = abs(int(sum(percent_loss)/len(correct_answers) * 100)/100)
+                show_current_error = True
+                if ass.regression_rmse == -1 or ass.regression_rmse > current_error:
+                    ass.regression_rmse = current_error
                 ass.regression_tries_left -= 1
                 ass.save()
             except:
@@ -89,6 +95,8 @@ def show_question(request, ass):
 
     context = {"ass": ass,
                "error_text": error_text,
+               "current_error": current_error,
+               "show_current_error": show_current_error,
                "error": error,
                }
 

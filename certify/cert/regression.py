@@ -18,6 +18,19 @@ from os.path import join
 from certify import settings
 
 
+def complete(request):
+    user = request.user
+    person = Person.objects.get(user=user)
+    try:
+        ass = Assignment.objects.filter(person=person).filter(hidden=False).filter(complete=False).filter(finished_regression=True)[0]
+        ass.complete = True
+        ass.save()
+    except Exception as e:
+        print(str(e))
+        return HttpResponse(str(e))
+
+
+
 def regression_start(request):
     user = request.user
     person = Person.objects.get(user=user)
@@ -83,6 +96,7 @@ def show_question(request, ass):
                 show_current_error = True
                 if ass.regression_rmse == -1 or ass.regression_rmse > current_error:
                     ass.regression_rmse = current_error
+                    ass.coefs = answer
                 ass.regression_tries_left -= 1
                 ass.save()
             except:

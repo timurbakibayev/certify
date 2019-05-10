@@ -12,6 +12,7 @@ from cert.adminka import title
 import datetime
 from pytz import timezone
 from cert import regression
+from cert import certificates
 
 latexify = lambda x: x.replace("$","\$")
 
@@ -24,6 +25,8 @@ def index(request):
         ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(finished=False)[0]
     except:
         ass = Assignment.objects.filter(hidden=False).filter(person=person)[len(Assignment.objects.filter(hidden=False).filter(person=person))-1]
+        if ass.complete:
+            return certificates.index(request)
         questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
         context = {"person": person, "assignment": ass,
                    "questions_total": questions_total,

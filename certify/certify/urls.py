@@ -28,6 +28,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   path('', views.index),
                   path('logout', views.log_me_out),
                   path('regression', regression.regression_start),
+                  path('complete', regression.complete),
                   path('finish_regression', regression.finish_regression),
                   path('reply/<int:number>', quiz_flow.reply),
                   path('test_question/<int:number>', quiz_flow.test_question),

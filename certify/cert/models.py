@@ -39,7 +39,7 @@ class Person(models.Model):
     first_name = models.CharField(max_length=1000, null=False, blank=False)
     birth_date = models.DateField(default="2019-01-01")
     email = models.CharField(max_length=100, default="", blank=True, null=True)
-    user = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
     iin = models.CharField(max_length=12, null=False, blank=False)
     state = models.CharField(max_length=10, default="idle")
     password = models.CharField(max_length=10, default="")
@@ -49,7 +49,7 @@ class Person(models.Model):
 
 
 class SendEmail(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.CharField(max_length=100, default="")
     subject = models.CharField(max_length=100, default="")
     text = models.TextField(max_length=10000, default="")
@@ -62,29 +62,29 @@ class SendEmail(models.Model):
 class QuizStructure(models.Model):
     name = models.CharField(max_length=200, default="", blank=True, null=True)
     minutes = models.IntegerField(default=60)
-    subject1 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub1", blank=False, null=False)
+    subject1 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub1", blank=False, null=False)
     quantity1 = models.IntegerField(default=10)
-    subject2 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub2", blank=True, null=True)
+    subject2 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub2", blank=True, null=True)
     quantity2 = models.IntegerField(default=0)
-    subject3 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub3", blank=True, null=True)
+    subject3 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub3", blank=True, null=True)
     quantity3 = models.IntegerField(default=0)
-    subject4 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub4", blank=True, null=True)
+    subject4 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub4", blank=True, null=True)
     quantity4 = models.IntegerField(default=0)
-    subject5 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub5", blank=True, null=True)
+    subject5 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub5", blank=True, null=True)
     quantity5 = models.IntegerField(default=0)
-    subject6 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub6", blank=True, null=True)
+    subject6 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub6", blank=True, null=True)
     quantity6 = models.IntegerField(default=0)
-    subject7 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub7", blank=True, null=True)
+    subject7 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub7", blank=True, null=True)
     quantity7 = models.IntegerField(default=0)
-    subject8 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub8", blank=True, null=True)
+    subject8 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub8", blank=True, null=True)
     quantity8 = models.IntegerField(default=0)
-    subject9 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub9", blank=True, null=True)
+    subject9 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub9", blank=True, null=True)
     quantity9 = models.IntegerField(default=0)
-    subject10 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub10", blank=True, null=True)
+    subject10 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub10", blank=True, null=True)
     quantity10 = models.IntegerField(default=0)
-    subject11 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub11", blank=True, null=True)
+    subject11 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub11", blank=True, null=True)
     quantity11 = models.IntegerField(default=0)
-    subject12 = models.ForeignKey(Subject, on_delete=models.DO_NOTHING, related_name="sub12", blank=True, null=True)
+    subject12 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub12", blank=True, null=True)
     quantity12 = models.IntegerField(default=0)
 
     def quantity(self):
@@ -97,11 +97,11 @@ class QuizStructure(models.Model):
 
 
 class Assignment(models.Model):
-    assigned_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='assgn_by')
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assgn_by')
     assigned_date_time = models.DateTimeField(auto_now_add=True)
-    assigned_to = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='assgn_to')
-    person = models.ForeignKey(Person, on_delete=models.DO_NOTHING)
-    quiz_structure = models.ForeignKey(QuizStructure, on_delete=models.DO_NOTHING)
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assgn_to')
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    quiz_structure = models.ForeignKey(QuizStructure, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
     started = models.BooleanField(default=False)
     started_regression = models.BooleanField(default=False)
@@ -113,8 +113,8 @@ class Assignment(models.Model):
     finished_regression_date_time = models.DateTimeField(null=True, blank=True)
     coefs = models.CharField(max_length=1000, default="1 1")
     total_time = models.IntegerField(default=0)
-    certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.DO_NOTHING)
-    current_question = models.ForeignKey(Question, blank=True, null=True, on_delete=models.DO_NOTHING)
+    certificate = models.ForeignKey(Certificate, blank=True, null=True, on_delete=models.CASCADE)
+    current_question = models.ForeignKey(Question, blank=True, null=True, on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
     emailed = models.BooleanField(default=False)
     regression_task = models.CharField(max_length=100, blank=True, null=True)
@@ -122,6 +122,7 @@ class Assignment(models.Model):
     regression_tries_left = models.IntegerField(default=5)
     regression_rmse = models.IntegerField(default=-1)
     regression_result = models.IntegerField(default=-1)
+    complete = models.BooleanField(default=False)
 
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:
@@ -137,8 +138,8 @@ class Assignment(models.Model):
 
 
 class AssignedQuestion(models.Model):
-    assignment = models.ForeignKey(Assignment, on_delete=models.DO_NOTHING, default="0")
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, default="0")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.IntegerField(default=0)
     answered = models.BooleanField(default=False)
     correct = models.BooleanField(default=False)

@@ -19,10 +19,6 @@
             <li class="nav-item"><p class="nav-link">{{ user.username }}</p></li>
             <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
     </div>
 </nav>
 
@@ -33,12 +29,10 @@
             <th>Фамилия</th>
             <th>Имя</th>
             <th>Тест</th>
-            <th>Пароль</th>
-            <th>Email</th>
             <th>Дата прохождения</th>
-            <th>Результат</th>
-            <th>Регрессия</th>
-            <th>Изменение</th>
+            <th>Результат теста</th>
+            <th>Результат задачи</th>
+            <th>Сертификат</th>
         </tr>
         {% for assignment in assignments %}
             <tr>
@@ -46,52 +40,28 @@
                 <td>{{ assignment.person.last_name }}</td>
                 <td>{{ assignment.person.first_name }}</td>
                 <td>{{ assignment.quiz_structure.name }}</td>
-                <td>{{ assignment.person.password }}</td>
-                <td>{{ assignment.person.email }}</td>
                 {% if assignment.finished_date_time %}
                     <td>{{ assignment.finished_date_time }}</td>
                 {% else %}
                     <td>-</td>
                 {% endif %}
-                <td><a href="/test_results/{{ assignment.id }}">{{ assignment.score_percent }}</a></td>
+                <td>{{ assignment.score_percent }}</td>
                 <td>
                     {% if assignment.finished_regression %}
                     {{ assignment.regression_result }}</td>
                     {% else %}
                     -
                     {% endif %}
-                <td><img src="/static/img/edit.png" width="24px" height="24px" onclick="
-                        editAss(
-                        '{{ assignment.person.iin }}',
-                        '{{ assignment.person.last_name }}',
-                        '{{ assignment.person.first_name }}',
-                        '{{ assignment.quiz_structure.id }}',
-                        '{{ assignment.person.email }}',
-                        )">
-                    <img src="/static/img/delete.png" width="24px" height="24px" onclick="
-                            deleteAss(
-                            '{{ assignment.id }}',
-                            '{{ assignment.person.last_name }}',
-                            )">
-                    {% if assignment.emailed %}
-                    <img src="/static/img/email_ok.png" width="24px" height="24px" onclick="
-                            sendEmailAgain(
+                <td>
+                    <img src="/static/img/certificate.png" width="24px" height="24px" onclick="
+                            generateCertificate(
                             '{{ assignment.id }}',
                             this
                             )">
-                    {% else %}
-                    <img src="/static/img/email.png" width="24px" height="24px" onclick="
-                            sendEmail(
-                            '{{ assignment.id }}',
-                            this
-                            )">
-                    {% endif %}
-                    <img src="">
                 </td>
             </tr>
         {% endfor %}
     </table>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#addAssignment">Добавить</button>
     <div class="row" style="display: flex; flex-flow: column; margin: auto; margin-top: 2em">
 {#        <img src="/media/{{ stats_file }}.png" width="300px">#}
     </div>
@@ -187,37 +157,21 @@
         $('#quiz').val(structure_id);
         $('#email').val(email);
     };
-    const deleteAss = (id, last_name) => {
-        if (window.confirm(`Удалить задание для ${last_name}?`)) {
-            fetch(`/delete/${id}`).then(() => {
-                window.location = "/";
-            })
-        }
-    };
-    let sentIds = [];
-    const sendEmail = async (id, image) => {
-        if (!sentIds.includes(id)) {
-            sentIds.push(id);
-            image.src = "/static/img/sending.gif";
-            let result = await fetch(`/send_email/${id}`);
-            let text = await result.text();
-            // alert(text);
-            if (text === "OK") {
-                image.src = "/static/img/email_ok.png";
-            } else {
-                alert(text);
-            }
-        } else {
-            alert("Уже отправлено. Для повторной отправки обновите страницу (F5) и нажмите на конверт ещё раз.");
-        }
-    };
-    const sendEmailAgain = async (id, image) => {
+    const sleep = m => new Promise(r => setTimeout(r, m));
+    const generateCertificate = async (id, image) => {
         image.src = "/static/img/sending.gif";
-        let result = await fetch(`/send_email/${id}`);
+        await sleep(1000);
+        let result = await fetch(`/generate_certificate/${id}`);
         let text = await result.text();
-        image.src = "/static/img/email_ok.png";
-        alert("Повторная отправка: " + text);
+        if (text === "OK") {
+            window.open = `/media/cert${id}.pdf`;
+            image.src = "/static/img/certificate.png";
+        } else {
+            alert(text);
+            image.src = "/static/img/certificate.png";
+        }
     };
+
 </script>
 
 {% include "latexify/scripts.html" %}

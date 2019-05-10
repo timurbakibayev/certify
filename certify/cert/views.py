@@ -4,6 +4,7 @@ from cert import adminka
 from cert import quiz_flow
 from cert.models import Assignment
 from cert.email import send_email_from_gmail
+from cert.email import send_email_from_gmail_dsa
 
 latexify = lambda x: x.replace("$", "\$")
 
@@ -53,7 +54,7 @@ def subject_text(assignment):
     return f"Тестирование: {assignment.quiz_structure.name}"
 
 
-def body_text(assignment):
+def body_text_almau(assignment):
     the_text = ""
     the_text += f"Здравствуйте, {assignment.person.first_name}!<br>"
     the_text += f"<br>"
@@ -77,6 +78,29 @@ def body_text(assignment):
     return the_text
 
 
+def body_text_dsa(assignment):
+    the_text = ""
+    the_text += f"Здравствуйте, {assignment.person.first_name}!<br>"
+    the_text += f"<br>"
+    the_text += f"Добро пожаловать в центр тестирования Data Science Academy!<br>"
+    the_text += f"<br>"
+    the_text += f"Для вас готов тест, желаем вам удачи!"
+    the_text += f"<br>"
+    the_text += f"Название теста: {assignment.quiz_structure.name}<br>"
+    the_text += f"Длительность: {assignment.quiz_structure.minutes} минут<br>"
+    the_text += f"Кол-во вопросов: {assignment.quiz_structure.quantity()}<br>"
+    the_text += f"<br>"
+    the_text += f"Для начала тестирования зайдите на сайт " \
+        f"<a href='https://test.dsacademy.kz'>https://test.dsacademy.kz</a> " \
+        f"и наберите следующие логин и пароль:<br>"
+    the_text += f"Логин: {assignment.person.user.username}<br>"
+    the_text += f"Пароль: {assignment.person.password}<br>"
+    the_text += f"<br>"
+    the_text += f"С уважением,<br>"
+    the_text += f"Команда Data Science Academy<br>"
+    return the_text
+
+
 def send_email(request, number):
     user = request.user
     if not user.is_authenticated:
@@ -85,7 +109,10 @@ def send_email(request, number):
         return HttpResponse(f"Failed: unathorized")
     try:
         assignment = Assignment.objects.get(pk=number)
-        send_email_from_gmail(assignment.person.email, subject_text(assignment), body_text(assignment))
+        if "dsacademy" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
+            send_email_from_gmail_dsa(assignment.person.email, subject_text(assignment), body_text_dsa(assignment))
+        else:
+            send_email_from_gmail(assignment.person.email, subject_text(assignment), body_text_almau(assignment))
         assignment.emailed = True
         assignment.save()
         return HttpResponse("OK")

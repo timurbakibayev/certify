@@ -99,7 +99,7 @@
                     </span>
                     <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="quit_quiz()"><span
                             class="btn-label"><i class="glyphicon glyphicon-chevron-right"
-                    ></i></span>До свидания!</label>
+                    ></i></span>Список результатов и сертификаты</label>
                 </div>
             </div>
         </div>
@@ -109,9 +109,9 @@
 <script language="JavaScript">
     const quit_quiz = () => {
         fadeOut(document.getElementById("quiz"), 500);
-        fetch("/logout").then(() => {
+        fetch("/complete").then(() => {
             setTimeout(() => {
-                window.location = "http://yessenovfoundation.org";
+                window.location = "/";
             }, 1000);
         });
     };

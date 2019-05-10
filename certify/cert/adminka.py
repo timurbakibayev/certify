@@ -6,6 +6,9 @@ from cert.models import QuizStructure
 from cert.models import Person
 import random
 import string
+import matplotlib.pyplot as plt
+from os.path import join
+from certify import settings
 
 
 def title(request):
@@ -76,5 +79,17 @@ def index(request):
     context["assignments"] = assignments
     context["quiz_structures"] = quizes
     context["title"] = title(request)
+
+    context["stats_file"] = str(int(random.randint(11111,99999)))
+
+    scores_math = []
+    for ass in assignments:
+        if ass.finished:
+            scores_math.append(ass.score_percent())
+
+    # plt.clf()
+    # path = join(settings.MEDIA_ROOT, context["stats_file"]+".png")
+    # plt.hist(scores_math)
+    # plt.savefig(path)
 
     return render(request, "adminka.html", context=context)

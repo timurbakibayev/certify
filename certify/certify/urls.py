@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from cert import views
 from cert import quiz_flow
 from cert import regression
+from cert import certificates
 from certify import settings
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
@@ -38,4 +39,5 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   path('send_email/<int:number>', views.send_email),
                   path('start_quiz', quiz_flow.start),
                   path('time_left', quiz_flow.time_left_http),
+                  path('generate_certificate/<int:id>', certificates.generate),
               ]

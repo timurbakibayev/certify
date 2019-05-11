@@ -160,11 +160,11 @@
     const sleep = m => new Promise(r => setTimeout(r, m));
     const generateCertificate = async (id, image) => {
         image.src = "/static/img/sending.gif";
-        await sleep(1000);
         let result = await fetch(`/generate_certificate/${id}`);
+        await sleep(1000);
         let text = await result.text();
-        if (text === "OK") {
-            window.open = `/media/cert${id}.pdf`;
+        if (text.includes(".pdf")) {
+            window.open(text);
             image.src = "/static/img/certificate.png";
         } else {
             alert(text);

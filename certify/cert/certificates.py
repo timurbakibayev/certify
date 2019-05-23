@@ -99,6 +99,8 @@ def generate(request, id):
     ass = Assignment.objects.get(pk=id)
     if ass.certificate is None:
         certificate = Certificate()
+        certificate.name = ass.person.last_name + " " + ass.person.first_name
+        certificate.course = ass.quiz_structure.name
         certificate.save()
     else:
         certificate = ass.certificate

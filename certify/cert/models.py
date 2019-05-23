@@ -124,6 +124,9 @@ class Assignment(models.Model):
     regression_result = models.IntegerField(default=-1)
     complete = models.BooleanField(default=False)
 
+    def total_score(self):
+        return round(self.score_percent()*0.8 + self.regression_result*0.2)
+
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:
             return "-"

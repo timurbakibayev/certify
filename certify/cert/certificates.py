@@ -12,20 +12,46 @@ from certify import settings
 import random
 
 import pdfrw
+import reportlab
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
+
+
+def register_fonts():
+    """
+    Register fonts used for generation of PDF documents.
+    """
+
+    reportlab.rl_config.warnOnMissingFontGlyphs = 0
+
+    registerFont(TTFont(
+        'Montserrat',
+        join(settings.BASE_DIR, 'montserrat.ttf')))
+
 
 def create_overlay(ass, certificate):
+    month_names = ["","Jan","Feb","March","Apr","May","June","July","Aug","Sep","Oct","Nov","Dec"]
+
+    register_fonts()
+
     c = canvas.Canvas('temp_overlay.pdf', pagesize=landscape(A4))
 
-    c.setFillColorRGB(0.1, 0.8, 0.6)  # choose your font colour
-    c.setFont("Helvetica", 30)  # choose your font type and font size
+    c.setFillColorRGB(0, 0, 0)
 
-    c.drawCentredString(11*cm, 14*cm, f'{ass.person.first_name} {ass.person.last_name}')
+    c.setFont("Montserrat", 30)
+    c.drawCentredString(11*cm, 12*cm, f'{ass.person.first_name} {ass.person.last_name}')
+    c.setFont("Montserrat", 17)
+    c.drawString(22*cm, 8*cm, f'{month_names[ass.finished_date_time.month]} {str(ass.finished_date_time.day).zfill(2)}, {ass.finished_date_time.year}')
+    c.drawString(22*cm, 7*cm, f'{round(ass.score_percent()*0.8 + ass.regression_result*0.2)}%')
+
+    c.setFont("Montserrat", 30)
+    c.setFillColorRGB(0.29, 0.37, 0.81)
     c.drawCentredString(11*cm, 9*cm, f'{ass.quiz_structure.name}')
 
     qrw = QrCodeWidget(f'https://cert.dsacademy.kz/media/{certificate.permanent_link}')
@@ -34,12 +60,12 @@ def create_overlay(ass, certificate):
     w = b[2] - b[0]
     h = b[3] - b[1]
 
-    size = 200
+    size = 170
 
     d = Drawing(1,1, transform=[size / w, 0, 0, size / h, 0, 0])
     d.add(qrw)
 
-    renderPDF.draw(d, c, 29*cm - size, 20*cm - size)
+    renderPDF.draw(d, c, 27.3*cm - size, 15*cm - size)
 
     c.save()
 
@@ -66,7 +92,7 @@ def index(request):
     person = Person.objects.get(user=user)
     assignments = Assignment.objects.filter(hidden=False).filter(person=person).filter(complete=True)
 
-    return render(request,"certificates.html",{"assignments":assignments})
+    return render(request, "certificates.html", {"assignments": assignments})
 
 
 def generate(request, id):
@@ -76,6 +102,8 @@ def generate(request, id):
         certificate.save()
     else:
         certificate = ass.certificate
+        if "dsacademy" in request.build_absolute_uri():
+            return HttpResponse(f"https://cert.dsacademy.kz/media/{certificate.permanent_link}")
 
     certificate.permanent_link = f'cert{certificate.id}_{random.randint(11111,99999)}.pdf'
     certificate.save()
@@ -83,7 +111,7 @@ def generate(request, id):
     ass.save()
 
     create_overlay(ass, certificate)
-    merge_pdfs(join(settings.BASE_DIR,'certificate_blank.pdf'),
+    merge_pdfs(join(settings.BASE_DIR,'dsa_certificate_blank.pdf'),
                'temp_overlay.pdf',
                join(settings.MEDIA_ROOT, certificate.permanent_link))
 

@@ -104,8 +104,8 @@ def generate(request, id):
         certificate.save()
     else:
         certificate = ass.certificate
-        if "dsacademy" in request.build_absolute_uri():
-            return HttpResponse(f"https://cert.dsacademy.kz/media/{certificate.permanent_link}")
+        # if "dsacademy" in request.build_absolute_uri():
+        #     return HttpResponse(f"https://cert.dsacademy.kz/media/{certificate.permanent_link}")
 
     certificate.permanent_link = f'cert{certificate.id}_{random.randint(11111,99999)}.pdf'
     certificate.save()
@@ -113,7 +113,7 @@ def generate(request, id):
     ass.save()
 
     create_overlay(ass, certificate)
-    merge_pdfs(join(settings.BASE_DIR,'dsa_certificate_blank.pdf'),
+    merge_pdfs(join(settings.BASE_DIR,'dsa_blank1.pdf'),
                'temp_overlay.pdf',
                join(settings.MEDIA_ROOT, certificate.permanent_link))
 

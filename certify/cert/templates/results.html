@@ -56,9 +56,16 @@
                             </style>
                         </svg>
                     </span>
+
+                    {% if assignment.regression %}
                     <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="regression()"><span
                             class="btn-label"><i class="glyphicon glyphicon-chevron-right"
                     ></i></span>Перейти к проекту</label>
+                    {% else %}
+                    <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="quit_quiz()"><span
+                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"
+                    ></i></span>Завершить</label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -70,7 +77,7 @@
         fadeOut(document.getElementById("quiz"), 500);
         fetch("/logout").then(() => {
             setTimeout(() => {
-                window.location = "http://yessenovfoundation.org";
+                window.location = "https://www.almau.edu.kz/";
             }, 1000);
         });
     };

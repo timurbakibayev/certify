@@ -62,6 +62,7 @@ class SendEmail(models.Model):
 class QuizStructure(models.Model):
     name = models.CharField(max_length=200, default="", blank=True, null=True)
     minutes = models.IntegerField(default=60)
+    regression = models.BooleanField(default=False)
     subject1 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub1", blank=False, null=False)
     quantity1 = models.IntegerField(default=10)
     subject2 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub2", blank=True, null=True)

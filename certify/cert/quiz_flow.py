@@ -38,6 +38,7 @@ def index(request):
         else:
             return regression.show_question(request, ass)
 
+    print("Current Assignment:", ass.id)
     context = {"person": person, "assignment": ass}
 
     if not ass.started:

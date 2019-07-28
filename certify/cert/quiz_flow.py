@@ -25,7 +25,7 @@ def index(request):
         ass = Assignment.objects.filter(hidden=False).filter(person=person).filter(finished=False)[0]
     except:
         ass = Assignment.objects.filter(hidden=False).filter(person=person)[len(Assignment.objects.filter(hidden=False).filter(person=person))-1]
-        if ass.complete:
+        if ass.complete or not ass.quiz_structure.regression:
             return certificates.index(request)
         questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
         context = {"person": person, "assignment": ass,
@@ -81,7 +81,7 @@ def index(request):
                }
 
     if ass.finished:
-        render(request, "results.html", context)
+        return render(request, "results.html", context)
 
     return render(request, "question.html", context)
     # except:

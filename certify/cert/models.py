@@ -63,6 +63,7 @@ class QuizStructure(models.Model):
     name = models.CharField(max_length=200, default="", blank=True, null=True)
     minutes = models.IntegerField(default=60)
     regression = models.BooleanField(default=False)
+    issue_certificate = models.BooleanField(default=True)
     subject1 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub1", blank=False, null=False)
     quantity1 = models.IntegerField(default=10)
     subject2 = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="sub2", blank=True, null=True)
@@ -126,7 +127,9 @@ class Assignment(models.Model):
     complete = models.BooleanField(default=False)
 
     def total_score(self):
-        return round(self.score_percent()*0.8 + self.regression_result*0.2)
+        if self.quiz_structure.regression:
+            return round(self.score_percent()*0.8 + self.regression_result*0.2)
+        return round(self.score_percent())
 
     def score_percent(self):
         if self.quiz_structure.quantity() == 0 or not self.finished:

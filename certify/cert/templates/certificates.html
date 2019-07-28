@@ -56,13 +56,13 @@
                 <td>{{ assignment.total_score }}</td>
                 <td>
                     {% if assignment.total_score >= 50 %}
+                        {% if assignment.quiz_structure.issue_certificate %}
                     <img src="/static/img/certificate.png" width="24px" height="24px" onclick="
                             generateCertificate(
                             '{{ assignment.id }}',
                             this
                             )">
-                    {% else %}
-                        нет
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

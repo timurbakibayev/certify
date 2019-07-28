@@ -90,7 +90,7 @@ def merge_pdfs(form_pdf, overlay_pdf, output):
 def index(request):
     user = request.user
     person = Person.objects.get(user=user)
-    assignments = Assignment.objects.filter(hidden=False).filter(person=person).filter(complete=True)
+    assignments = Assignment.objects.filter(hidden=False).filter(person=person).filter(finished=True)
 
     return render(request, "certificates.html", {"assignments": assignments})
 

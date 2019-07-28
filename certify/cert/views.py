@@ -84,7 +84,7 @@ def body_text_dsa(assignment):
     the_text += f"<br>"
     the_text += f"Добро пожаловать в центр тестирования Data Science Academy!<br>"
     the_text += f"<br>"
-    the_text += f"Для вас готов тест, желаем вам удачи!"
+    the_text += f"Мы со всей любовью приготовили для вас тест, надеемся, вам понравится!"
     the_text += f"<br>"
     the_text += f"Название теста: {assignment.quiz_structure.name}<br>"
     the_text += f"Длительность: {assignment.quiz_structure.minutes} минут<br>"

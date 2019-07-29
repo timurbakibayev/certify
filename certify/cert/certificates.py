@@ -48,7 +48,7 @@ def create_overlay(ass, certificate):
     c.drawCentredString(11*cm, 12*cm, f'{ass.person.first_name} {ass.person.last_name}')
     c.setFont("Montserrat", 17)
     c.drawString(22*cm, 8*cm, f'{month_names[ass.finished_date_time.month]} {str(ass.finished_date_time.day).zfill(2)}, {ass.finished_date_time.year}')
-    c.drawString(22*cm, 7*cm, f'{round(ass.score_percent()*0.8 + ass.regression_result*0.2)}%')
+    c.drawString(22*cm, 7*cm, f'{ass.total_score()}%')
 
     c.setFont("Montserrat", 25)
     c.setFillColorRGB(0.29, 0.37, 0.81)

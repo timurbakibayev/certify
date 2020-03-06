@@ -91,7 +91,7 @@ def body_text_dsa(assignment):
     the_text += f"Кол-во вопросов: {assignment.quiz_structure.quantity()}<br>"
     the_text += f"<br>"
     the_text += f"Для начала тестирования зайдите на сайт " \
-        f"<a href='https://test.dsacademy.kz'>https://test.dsacademy.kz</a> " \
+        f"<a href='https://cert.dsacademy.kz'>https://cert.dsacademy.kz</a> " \
         f"и наберите следующие логин и пароль:<br>"
     the_text += f"Логин: {assignment.person.user.username}<br>"
     the_text += f"Пароль: {assignment.person.password}<br>"

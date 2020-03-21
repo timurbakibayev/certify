@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+{% load latexify %}
+<head>
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
+    {% include "css_loads_ydl.html" %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="modal-dialog" style="width: 80%; zoom: 1.5">
+        <div class="modal-content">
+            <div class="modal-header">
+                Тестирование: {{ assignment.quiz_structure.name }}
+            </div>
+            <div class="modal-header">
+                Время тестирования: {{ assignment.quiz_structure.minutes }} минут<br>
+                Количество вопросов: {{ assignment.quiz_structure.quantity }}.
+                В каждом вопросе по 4 варианта ответов, один из которых всегда верный.
+            </div>
+            <div class="modal-body">
+                <div class="quiz" id="quiz" data-toggle="buttons">
+                    <label class="element-animation1 btn btn-lg btn-block" onclick="start_quiz()"><span
+                            class="btn-label"><i class="glyphicon glyphicon-chevron-right"
+                    ></i></span>Начать тестирование</label>
+                    <span>
+                        Внимание!<br>
+                        Не проходите тест с мобильных телефонов! Некоторые формулы могут не отображаться!<br>
+                        В случае неполадок с оборудованием Вы можете запустить тест на другом компьютере и продолжить,
+                        используя свои логин и пароль. Приготовьте бумагу и карандаш.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    const start_quiz = () => {
+        fadeOut(document.getElementById("quiz"),500);
+        fetch(`/start_quiz`).then( () => {
+            setTimeout(() => {
+                window.location = "/";
+            }, 1000);
+        });
+    };
+
+    function fadeOut(elem, ms) {
+        if (!elem)
+            return;
+
+        if (ms) {
+            var opacity = 1;
+            var timer = setInterval(function () {
+                opacity -= 50 / ms;
+                if (opacity <= 0) {
+                    clearInterval(timer);
+                    opacity = 0;
+                    elem.style.display = "none";
+                    elem.style.visibility = "hidden";
+                }
+                elem.style.opacity = opacity;
+                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+            }, 50);
+        } else {
+            elem.style.opacity = 0;
+            elem.style.filter = "alpha(opacity=0)";
+            elem.style.display = "none";
+            elem.style.visibility = "hidden";
+        }
+    }
+
+</script>
+{% include "latexify/scripts.html" %}
+</body>
+</html>

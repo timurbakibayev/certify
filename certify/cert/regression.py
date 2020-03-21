@@ -52,12 +52,15 @@ def regression_start(request):
             "x5": np.random.randint(200, size=120),
         })
 
-        df["f"] = random.randint(0,4) * (df["x1"] ** random.randint(0, 2))
+        df["f"] = random.randint(0,4) * (df["x1"] ** random.randint(1, 2))
         df["f"] = df["f"] + random.randint(0,4) * (df["x2"] ** random.randint(0, 2))
         df["f"] = df["f"] + random.randint(0,4) * (df["x3"] ** random.randint(0, 2))
         df["f"] = df["f"] + random.randint(0,4) * (df["x4"] ** random.randint(0, 2))
         df["f"] = df["f"] + random.randint(0,4) * (df["x5"] ** random.randint(0, 2))
         df["f"] = df["f"] + (np.random.randint(50, size=120) - 25)
+        df["f"] = df["f"] + random.randint(1,3) * df["x2"] * df["x4"]
+        df["f"] = df["f"] + random.randint(0,3) * df["x2"] * df["x5"]
+        df["f"] = df["f"] + random.randint(0,3) * df["x2"] * df["x4"] * df["x5"]
 
         df1 = df[:100]
         df2 = df[100:]

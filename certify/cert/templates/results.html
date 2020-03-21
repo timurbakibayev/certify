@@ -57,7 +57,7 @@
                         </svg>
                     </span>
 
-                    {% if assignment.regression %}
+                    {% if assignment.quiz_structure.regression %}
                     <label class="element-animation1 btn btn-lg btn-info btn-block" onclick="regression()"><span
                             class="btn-label"><i class="glyphicon glyphicon-chevron-right"
                     ></i></span>Перейти к проекту</label>
@@ -77,7 +77,7 @@
         fadeOut(document.getElementById("quiz"), 500);
         fetch("/logout").then(() => {
             setTimeout(() => {
-                window.location = "https://www.almau.edu.kz/";
+                window.location = "/";
             }, 1000);
         });
     };

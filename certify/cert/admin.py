@@ -7,7 +7,13 @@ from cert.models import Assignment
 from cert.models import AssignedQuestion
 from cert.models import QuizStructure
 
-admin.site.register(Question)
+
+class AdmQuestion(admin.ModelAdmin):
+    list_filter = ['subject']
+    search_fields = ['question']
+
+
+admin.site.register(Question, AdmQuestion)
 admin.site.register(Subject)
 admin.site.register(Person)
 admin.site.register(Assignment)

@@ -17,6 +17,10 @@ from cert import certificates
 latexify = lambda x: x.replace("$","\$")
 
 
+def encode(textIn):
+    return textIn.replace('i in', 'і in').replace('print', 'prіnt').replace('a =', 'а =').replace("'a'", "'а'")
+
+
 def index(request):
     user = request.user
     person = Person.objects.get(user=user)
@@ -42,7 +46,10 @@ def index(request):
     context = {"person": person, "assignment": ass}
 
     if not ass.started:
-        return render(request, "quiz_start.html", context)
+        if "yessenov" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
+            return render(request, "quiz_start_ydl.html", context)
+        else:
+            return render(request, "quiz_start.html", context)
 
     if time_left(request) == 0:
         questions = AssignedQuestion.objects.filter(assignment=ass).filter(answered=False)
@@ -75,7 +82,7 @@ def index(request):
                "question_number": question_number,
                "questions_total": questions_total,
                "question_lines": [
-                   {"text": latexify(i), "padding": str((len(i) - len(i.lstrip())) / 2)} for i in
+                   {"text": encode(latexify(i)), "padding": str((len(i) - len(i.lstrip())) / 2)} for i in
                    ass.current_question.question.split("\n")
                ]
                }
@@ -83,7 +90,10 @@ def index(request):
     if ass.finished:
         return render(request, "results.html", context)
 
-    return render(request, "question.html", context)
+    if "yessenov" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
+        return render(request, "question_ydl.html", context)
+    else:
+        return render(request, "question.html", context)
     # except:
     #     return render(request, "daswares.html", context)
 

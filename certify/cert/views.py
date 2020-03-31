@@ -1,10 +1,11 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.template import Template, Context
 from cert import adminka
 from cert import quiz_flow
 from cert.models import Assignment
-from cert.email import send_email_from_gmail
-from cert.email import send_email_from_gmail_dsa
+from cert.models import Email
+from cert.email import send_email_custom
 
 latexify = lambda x: x.replace("$", "\$")
 
@@ -109,12 +110,15 @@ def send_email(request, number):
         return HttpResponse(f"Failed: unathorized")
     try:
         assignment = Assignment.objects.get(pk=number)
-        if "dsacademy" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
-            send_email_from_gmail_dsa(assignment.person.email, subject_text(assignment), body_text_dsa(assignment))
-        else:
-            send_email_from_gmail(assignment.person.email, subject_text(assignment), body_text_almau(assignment))
-        assignment.emailed = True
-        assignment.save()
-        return HttpResponse("OK")
+        for email in Email.objects.all():
+            if email.domain in request.build_absolute_uri():
+                template = Template(email.text)
+                template_html = Template(email.html)
+                context = Context({'assignment': assignment})
+                send_email_custom(assignment.person.email, email, template.render(context), template_html.render(context))
+                assignment.emailed = True
+                assignment.save()
+                return HttpResponse("OK")
     except Exception as e:
         return HttpResponse(f"Failed: {e}")
+    return HttpResponse("Please, set properties for domain " + request.build_absolute_uri())

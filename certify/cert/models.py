@@ -2,6 +2,43 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Email(models.Model):
+    domain = models.CharField(max_length=50, default="localhost")
+    text = models.TextField(max_length=10000, default="""
+Здравствуйте, {{assignment.person.first_name}}! /n
+{{assignment.quiz_structure.name}}/n
+{{assignment.quiz_structure.minutes}}/n
+/n
+{{assignment.quiz_structure.quantity}}/n
+Логин: {{assignment.person.user.username}}/n
+Пароль: {{assignment.person.password}}/n
+    """, blank=False, null=False)
+    html = models.TextField(max_length=10000, default="""
+<html>
+<body><p>
+Здравствуйте, {{assignment.person.first_name}}!<br>
+{{assignment.quiz_structure.name}}<br>
+{{assignment.quiz_structure.minutes}}<br>
+<br>
+{{assignment.quiz_structure.quantity}}<br>
+Логин: {{assignment.person.user.username}}<br>
+Пароль: {{assignment.person.password}}<br>
+</p>
+</body>
+</hmtl>
+        """, blank=False, null=False)
+    port = models.IntegerField(default=465)  # For SSL
+
+    sender_email = models.CharField(max_length=50, default="dsacademy.kz@gmail.com")
+    subject = models.CharField(max_length=50, default="Тестовая система Data Science Academy")
+    smtp_server = models.CharField(max_length=100, default="smtp.gmail.com")
+    login = models.CharField(max_length=50, default="dsacademykz@gmail.com")
+    password = models.CharField(max_length=50, default="dsadsa5918")
+
+    def __str__(self):
+        return f"Domain: {self.domain}"
+
+
 class Certificate(models.Model):
     name = models.CharField(max_length=1000, default="Ivan Pupkin")
     course = models.CharField(max_length=1000, default="Python for Data Science")
@@ -19,7 +56,6 @@ class Subject(models.Model):
 
     def __str__(self):
         return f"{self.code}: {self.name}, {len(Question.objects.filter(subject=self))} вопросов"
-
 
 class Question(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)

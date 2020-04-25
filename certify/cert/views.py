@@ -17,9 +17,7 @@ def log_me_out(request):
 # Create your views here.
 def index(request):
     failed_login = False
-    print("ddd", request.method)
     if request.method == "POST":
-        print("eee", request.POST.get("operation", ""))
         if request.POST.get("operation", "") == "login":
             user = authenticate(username=request.POST.get("username", ""), password=request.POST.get("password", ""))
             if user is not None:

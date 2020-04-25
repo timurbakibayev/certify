@@ -78,15 +78,6 @@
         else 
             button.style.visibility = "hidden";
     }
-    const answer = (chosen) => {
-        console.log(chosen);
-        fadeOut(document.getElementById("quiz"), 500);
-        fetch(`/reply/${chosen}`).then(() => {
-            setTimeout(() => {
-                window.location = "/";
-            }, 1000);
-        });
-    };
 
     const finish_regression = () => {
         {% if ass.regression_tries_left > 0 %}

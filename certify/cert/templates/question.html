@@ -4,8 +4,12 @@
 <head>
     {#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
     {% include "css_loads_ydl.html" %}
+    <script type="text/javascript" src="/static/js/question.js"></script>
 </head>
 <body>
+
+{% include "header.html" %}
+
 <div class="container-fluid">
     <div class="modal-dialog" style="width: 100%; zoom: 0.8; max-width: 1024px">
         <div class="modal-content">
@@ -57,80 +61,7 @@
         </div>
     </div>
 </div>
-<script language="JavaScript">
-    const answer = (chosen) => {
-        console.log(chosen);
-        fadeOut(document.getElementById("quiz"),500);
-        fetch(`/reply/${chosen}`).then( () => {
-            setTimeout(() => {
-                window.location = "/";
-            }, 1000);
-        });
-    };
 
-    const showTime = async () => {
-        result = await fetch("/time_left");
-        document.getElementById("time_left").innerHTML = await result.text();
-    };
-
-    showTime();
-
-    setInterval(async ()=> {
-        showTime();
-    }, 5000);
-
-    function fadeIn(elem, ms) {
-        if (!elem)
-            return;
-
-        elem.style.opacity = 0;
-        elem.style.filter = "alpha(opacity=0)";
-        elem.style.display = "inline-block";
-        elem.style.visibility = "visible";
-
-        if (ms) {
-            var opacity = 0;
-            var timer = setInterval(function () {
-                opacity += 50 / ms;
-                if (opacity >= 1) {
-                    clearInterval(timer);
-                    opacity = 1;
-                }
-                elem.style.opacity = opacity;
-                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-            }, 50);
-        } else {
-            elem.style.opacity = 1;
-            elem.style.filter = "alpha(opacity=1)";
-        }
-    }
-
-    function fadeOut(elem, ms) {
-        if (!elem)
-            return;
-
-        if (ms) {
-            var opacity = 1;
-            var timer = setInterval(function () {
-                opacity -= 50 / ms;
-                if (opacity <= 0) {
-                    clearInterval(timer);
-                    opacity = 0;
-                    elem.style.display = "none";
-                    elem.style.visibility = "hidden";
-                }
-                elem.style.opacity = opacity;
-                elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-            }, 50);
-        } else {
-            elem.style.opacity = 0;
-            elem.style.filter = "alpha(opacity=0)";
-            elem.style.display = "none";
-            elem.style.visibility = "hidden";
-        }
-    }
-
-</script>
 {% include "latexify/scripts.html" %}
 </body>
 </html>

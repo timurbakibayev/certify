@@ -14,7 +14,66 @@ from pytz import timezone
 from cert import regression
 from cert import certificates
 
-latexify = lambda x: x.replace("$","\$")
+
+def latexify(x):
+    if x is None:
+        return ""
+    return x.replace("$","\$")
+
+
+def textbox(x,line_number):
+    minus = 0
+    in_minus = False
+    out = ''
+    answers = []
+    number = 0
+    for s in x:
+        if not in_minus:
+            out += s
+        if s == '-':
+            minus += 1
+        else:
+            minus = 0
+        if minus == 3:
+            minus = 0
+            if not in_minus:
+                out = out[:-3]
+                number += 1
+                out += "</span><input name='d" + str(line_number*100+number) + "' class='width-dynamic django-latexify inputstyle'><span class='django-latexify text'>"
+            in_minus = not in_minus
+    return out
+
+
+def correct(x,line_number,student_answers):
+    minus = 0
+    in_minus = False
+    out = ''
+    answers = {}
+    number = 0
+    text = ''
+    for s in x:
+        if in_minus:
+            answers['d'+str(line_number*100+number)] += s
+        if s == '-':
+            minus += 1
+        else:
+            minus = 0
+        if minus == 3:
+            minus = 0
+            if not in_minus:
+                number += 1
+                answers['d'+str(line_number*100+number)] = ''
+            else:
+                answers['d'+str(line_number*100+number)] = answers['d'+str(line_number*100+number)][:-3]
+            in_minus = not in_minus
+    correct_number = 0
+    for i in answers:
+        text += answers[i] + ' --- ' + student_answers.get(i) + ', '
+        print(i, 'should be equal to' , answers[i])
+        print('but it is equal to', student_answers.get(i))
+        if answers[i].strip().lower() == student_answers.get(i).strip().lower():
+            correct_number += 1
+    return correct_number, number, text
 
 
 def encode(textIn):
@@ -46,7 +105,7 @@ def index(request):
     context = {"person": person, "assignment": ass}
 
     if not ass.started:
-        if "yessenov" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
+        if "yessenov" in request.build_absolute_uri():
             return render(request, "quiz_start_ydl.html", context)
         else:
             return render(request, "quiz_start.html", context)
@@ -65,7 +124,12 @@ def index(request):
     except:
         ass.finished = True
         ass.finished_date_time = datetime.datetime.now()
-        ass.score = len(AssignedQuestion.objects.filter(assignment=ass).filter(correct=True))
+        score = 0
+        score_total = 0
+        for assigned_question in AssignedQuestion.objects.filter(assignment=ass):
+            score += assigned_question.score
+            score_total += assigned_question.question.weight
+        ass.score = int(score/score_total*100)
         ass.save()
         return redirect("/")
 
@@ -73,25 +137,51 @@ def index(request):
     questions_total = len(AssignedQuestion.objects.filter(assignment=ass))
     question_number = questions_total - question_number + 1
 
+    question_lines = []
+    for i in range(len(ass.current_question.question.split("\n"))):
+        s = ass.current_question.question.split("\n")[i]
+        question_lines.append({"text": encode(textbox(latexify(s), i)), "padding": str((len(s) - len(s.lstrip())) / 2)})
+
     context = {"person": person, "assignment": ass, "question": ass.current_question,
-               "question_text": latexify(ass.current_question.question),
+               "question_text": textbox(latexify(ass.current_question.question),0),
                "answer1": latexify(ass.current_question.answer1),
                "answer2": latexify(ass.current_question.answer2),
                "answer3": latexify(ass.current_question.answer3),
                "answer4": latexify(ass.current_question.answer4),
                "question_number": question_number,
                "questions_total": questions_total,
-               "question_lines": [
-                   {"text": encode(latexify(i)), "padding": str((len(i) - len(i.lstrip())) / 2)} for i in
-                   ass.current_question.question.split("\n")
-               ]
+               "question_lines": question_lines
                }
+
+    if request.method == "POST":
+        c, n, collected_text = 0, 0, ''
+        for i in range(len(ass.current_question.question.split("\n"))):
+            s = ass.current_question.question.split("\n")[i]
+            correct_number, number, text = correct(latexify(s), i, request.POST)
+            collected_text += text
+            c += correct_number
+            n += number
+
+        print(c, 'of', n, 'correct')
+        assigned_question = AssignedQuestion.objects.filter(assignment=ass).filter(answered=False)[0]
+        assigned_question.answered = True
+        assigned_question.answer = 0
+        assigned_question.answer_text = collected_text
+        assigned_question.correct = False
+        if n > 0:
+            assigned_question.score = assigned_question.question.weight * c / n
+        else:
+            assigned_question.score = 0
+        assigned_question.save()
+
+        return redirect("/")
+
 
     if ass.finished:
         return render(request, "results.html", context)
 
-    if "yessenov" in request.build_absolute_uri() or "localhost" in request.build_absolute_uri():
-        return render(request, "question_ydl.html", context)
+    if '---' in ass.current_question.question:
+        return render(request, "question_input.html", context)
     else:
         return render(request, "question.html", context)
     # except:
@@ -109,6 +199,8 @@ def reply(request, number):
         assigned_question.answered = True
         assigned_question.answer = number
         assigned_question.correct = number == assigned_question.question.correct_1_to_4
+        if assigned_question.correct:
+            assigned_question.score = assigned_question.question.weight
         assigned_question.save()
         return HttpResponse("OK")
     except Exception as e:

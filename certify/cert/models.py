@@ -60,11 +60,12 @@ class Subject(models.Model):
 class Question(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     question = models.TextField(max_length=10000, default="", blank=False, null=False)
-    answer1 = models.CharField(max_length=1000, default="", blank=False, null=False)
-    answer2 = models.CharField(max_length=1000, default="", blank=False, null=False)
-    answer3 = models.CharField(max_length=1000, default="", blank=False, null=False)
-    answer4 = models.CharField(max_length=1000, default="", blank=False, null=False)
+    answer1 = models.CharField(max_length=1000, default="", blank=True, null=True)
+    answer2 = models.CharField(max_length=1000, default="", blank=True, null=True)
+    answer3 = models.CharField(max_length=1000, default="", blank=True, null=True)
+    answer4 = models.CharField(max_length=1000, default="", blank=True, null=True)
     correct_1_to_4 = models.IntegerField(default=1)
+    weight = models.IntegerField(default=1)
 
     def __str__(self):
         return f"{self.subject.code}: {self.question}"
@@ -168,9 +169,7 @@ class Assignment(models.Model):
         return round(self.score_percent())
 
     def score_percent(self):
-        if self.quiz_structure.quantity() == 0 or not self.finished:
-            return "-"
-        return int(self.score / self.quiz_structure.quantity() * 100)
+        return self.score
 
     def __str__(self):
         score = ""
@@ -184,8 +183,10 @@ class AssignedQuestion(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, default="0")
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.IntegerField(default=0)
+    answer_text = models.CharField(default='', max_length=1000)
     answered = models.BooleanField(default=False)
     correct = models.BooleanField(default=False)
+    score = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.assignment.person.last_name} {self.assignment.person.first_name} {self.question}"

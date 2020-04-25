@@ -401,3 +401,8 @@ label .glyphicon {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+
+.inputstyle {
+    padding-left: 10px; padding-right: 5px; align-self: center; min-width: 80px; max-width: 500px;
+    border: none; border-bottom: solid; border-bottom-style: dashed;
+}

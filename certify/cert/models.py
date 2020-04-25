@@ -169,7 +169,9 @@ class Assignment(models.Model):
         return round(self.score_percent())
 
     def score_percent(self):
-        return self.score
+        if self.quiz_structure.quantity() == 0 or not self.finished:
+            return "-"
+        return int(self.score / self.quiz_structure.quantity() * 100)
 
     def __str__(self):
         score = ""
